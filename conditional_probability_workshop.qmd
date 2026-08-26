@@ -1,0 +1,149 @@
+---
+title: "conditional_probability_workshop"
+format: html
+editor: visual
+---
+
+### Load in Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+
+library(ggplot2)
+library(dplyr)
+
+```
+
+### Read in Dataset from Kaggle
+
+```{r}
+patients <- read_csv(here("/Users/takaz/OneDrive/DS400-BayesianStatistics/Data/healthcare-dataset-stroke-data.csv"))
+```
+
+```{r}
+head(patients)
+```
+
+```{r}
+names(patients)
+```
+
+### Clean and Work Dataset
+
+```{r}
+patients %>% 
+  count(stroke) %>% 
+  mutate(percent = n / sum(n))
+```
+
+```{r}
+plot_data <- patients %>%
+  mutate(stroke = factor(stroke, levels = c(0, 1), labels = c("No Stroke", "Stroke"))) %>%
+  count(gender, age, stroke)
+```
+
+```{r}
+head(plot_data)
+```
+
+### Create GGPLOT Viz
+
+#### VISUAL #1 
+
+```{r}
+ggplot(data = patients, aes(x = gender, fill = factor(stroke))) +
+  geom_bar(position = "dodge")
+```
+
+#### VISUAL #2
+
+```{r}
+ggplot(data = patients, aes(x = hypertension, fill = factor(stroke))) +
+  geom_bar(position = "dodge")
+```
+
+#### VISUAL #3
+
+```{r}
+ggplot(data = patients, aes(x = factor(stroke), fill = factor(stroke), y = avg_glucose_level)) +
+  geom_boxplot()
+```
+
+#### VISUAL #4
+
+```{r}
+ggplot(data = patients, aes(x = age, fill = factor(stroke))) +
+  geom_bar()
+```
+
+#### VISUAL #5
+
+```{r}
+ggplot(data = patients, aes(x = heart_disease, fill = factor(stroke))) +
+  geom_bar(position = "dodge")
+```
+
+### Probability of hypertension
+
+```{r}
+# P(A|B)
+patients %>% 
+  count(stroke, hypertension) %>% 
+  group_by(stroke) %>% 
+  mutate(percent = n / sum(n))
+
+probability_hypertension_given_stroke <- patients %>% 
+  count(stroke, hypertension) %>% 
+  group_by(stroke) %>% 
+  mutate(percent = n / sum(n)) %>% 
+  filter(stroke == 1, hypertension == 1) %>% 
+  pull(percent)
+
+# P(A)
+patients %>% 
+  count(hypertension) %>% 
+  mutate(percent = n / sum(n))
+
+probability_hypertension <- patients %>% 
+  count(hypertension) %>% 
+  mutate(percent = n / sum(n)) %>% 
+  filter(hypertension == 1) %>% 
+  pull(percent)
+
+# P(B|A)
+probability_stroke_given_hypertension <- (probability_hypertension_given_stroke * probability_stroke) / probability_hypertension
+probability_stroke_given_hypertension
+```
+
+```{r}
+patients %>% 
+  mutate(hypertension = factor(hypertension, levels = c(0, 1), labels = c("No Hypertension", "Hypertension"))) %>% 
+  group_by(hypertension) %>% 
+  summarise(percent_stroke = mean(stroke)) %>% 
+  ggplot(aes(x = hypertension, y = percent_stroke, fill = hypertension)) +
+  geom_col(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "P(Stroke | Hypertension)",
+    x = NULL,
+    y = "Percent who had a stroke"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
