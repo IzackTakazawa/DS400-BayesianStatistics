@@ -49,7 +49,7 @@ head(plot_data)
 
 ### Create GGPLOT Viz
 
-#### VISUAL #1 
+#### VISUAL #1
 
 ```{r}
 ggplot(data = patients, aes(x = gender, fill = factor(stroke))) +
