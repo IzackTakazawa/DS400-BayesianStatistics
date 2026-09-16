@@ -129,7 +129,8 @@ report(model_humidity)
 ```{r}
 ggplot(bikes_data, aes(x = windspeed, y = rides)) +
   geom_point(color = "steelblue") +
-  geom_smooth(method = "lm", color = "darkred")
+  geom_smooth(method = "lm", color = "darkred") +
+  stat_cor()
 
 model_wind <- lm(rides ~ windspeed, data = bikes_data)
 report(model_wind)
@@ -138,11 +139,12 @@ report(model_wind)
 - rides and temp_actual
 
 ```{r}
-ggplot(bikes_data, aes(x = windspeed, y = rides)) +
+ggplot(bikes_data, aes(x = temp_actual, y = rides)) +
   geom_point(color = "steelblue") +
-  geom_smooth(method = "lm", color = "darkred")
+  geom_smooth(method = "lm", color = "darkred") +
+  stat_cor()
 
-model_wind <- lm(rides ~ windspeed, data = bikes_data)
+model_wind <- lm(rides ~ temp_actual, data = bikes_data)
 report(model_wind)
 ```
 
@@ -151,7 +153,8 @@ report(model_wind)
 ```{r}
 ggplot(bikes_data, aes(x = temp_actual, y = temp_feel)) +
   geom_point(color = "steelblue") +
-  geom_smooth(method = "lm", se = FALSE, color = "darkred")
+  geom_smooth(method = "lm", se = FALSE, color = "darkred") +
+  stat_cor()
 
 model_temps <- lm(temp_feel ~ temp_actual, data = bikes_data)
 report(model_temps)
