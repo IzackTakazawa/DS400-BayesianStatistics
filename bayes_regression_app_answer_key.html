@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bayes Regression App</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="bayes_regression_app_answer_key_files/libs/clipboard/clipboard.min.js"></script>
+<script src="bayes_regression_app_answer_key_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="bayes_regression_app_answer_key_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="bayes_regression_app_answer_key_files/libs/quarto-html/popper.min.js"></script>
+<script src="bayes_regression_app_answer_key_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="bayes_regression_app_answer_key_files/libs/quarto-html/anchor.min.js"></script>
+<link href="bayes_regression_app_answer_key_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="bayes_regression_app_answer_key_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="bayes_regression_app_answer_key_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="bayes_regression_app_answer_key_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="bayes_regression_app_answer_key_files/libs/bootstrap/bootstrap-efbb37e9afcc02144ebbc7afd12a776f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Bayes Regression App</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyverse' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tibble' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'readr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'stringr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'forcats' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'lubridate' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesrules)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'bayesrules' was built under R version 4.4.3</code></pre>
+</div>
+</div>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>bikes_data <span class="ot">&lt;-</span> bayesrules<span class="sc">::</span>bikes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="question" class="level3">
+<h3 class="anchored" data-anchor-id="question">Question</h3>
+<p>How many rides will we have on a 75 degree (feel) day</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>bikes_data <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(temp_feel, <span class="fl">74.9</span>, <span class="dv">76</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> rides)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bayes_regression_app_answer_key_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bikes_data, <span class="fu">aes</span>(<span class="at">x =</span> temp_feel, <span class="at">y =</span> rides)) <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bayes_regression_app_answer_key_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="app" class="level3">
+<h3 class="anchored" data-anchor-id="app">App</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesrules)   <span class="co"># provides the `bikes` data AND plot_normal()/plot_gamma()</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)     <span class="co"># for the real stan_glm() MCMC fit</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'rstanarm' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Rcpp</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'Rcpp' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>This is rstanarm version 2.32.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- See https://mc-stan.org/rstanarm/articles/priors for changes to default priors!</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- Default priors may change, so it's safest to specify priors, even if equivalent to the defaults.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- For execution on a local, multicore CPU with excess RAM we recommend calling</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  options(mc.cores = parallel::detectCores())</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>bikes_data <span class="ot">&lt;-</span> bayesrules<span class="sc">::</span>bikes</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>mean_temp  <span class="ot">&lt;-</span> <span class="fu">mean</span>(bikes_data<span class="sc">$</span>temp_feel)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>temp_range <span class="ot">&lt;-</span> <span class="fu">range</span>(bikes_data<span class="sc">$</span>temp_feel)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># "Data alone" reference for beta1: a plain OLS fit, computed once since</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># bikes_data never changes. Its sampling distribution (estimate +/- SE)</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># is the frequentist stand-in for "what does the data alone say", the</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># direct regression analogue of the scaled-likelihood curve from the</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Beta-Binomial election app.</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>ols_model     <span class="ot">&lt;-</span> <span class="fu">lm</span>(rides <span class="sc">~</span> temp_feel, <span class="at">data =</span> bikes_data)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>ols_coef      <span class="ot">&lt;-</span> <span class="fu">summary</span>(ols_model)<span class="sc">$</span>coefficients</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>ols_beta1_est <span class="ot">&lt;-</span> <span class="fu">unname</span>(ols_coef[<span class="st">"temp_feel"</span>, <span class="st">"Estimate"</span>])</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>ols_beta1_se  <span class="ot">&lt;-</span> <span class="fu">unname</span>(ols_coef[<span class="st">"temp_feel"</span>, <span class="st">"Std. Error"</span>])</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co"># "Data alone" reference for beta0c (typical ridership at the average</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co"># temperature): the OLS fitted value AT mean_temp, which -- by a basic</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co"># property of least-squares regression -- always exactly equals</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co"># mean(rides), with its own standard error from predict().</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>ols_mu_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(ols_model, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">temp_feel =</span> mean_temp), <span class="at">se.fit =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>ols_mu_est  <span class="ot">&lt;-</span> <span class="fu">unname</span>(ols_mu_pred<span class="sc">$</span>fit)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>ols_mu_se   <span class="ot">&lt;-</span> <span class="fu">unname</span>(ols_mu_pred<span class="sc">$</span>se.fit)</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>app_css <span class="ot">&lt;-</span> tags<span class="sc">$</span><span class="fu">head</span>(tags<span class="sc">$</span><span class="fu">style</span>(<span class="fu">HTML</span>(<span class="st">"</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="st">  .story-panel {</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="st">    background: #eef4fb; border-left: 4px solid #4C72B0;</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="st">    border-radius: 4px; padding: 10px 16px; margin-bottom: 14px;</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="st">  .interp-panel {</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a><span class="st">    background: #f2f8f0; border-left: 4px solid #55A868;</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="st">    border-radius: 4px; padding: 10px 16px; margin-top: 10px;</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a><span class="st">  .concept-panel {</span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="st">    background: #f7f2fb; border-left: 4px solid #8B5CF6;</span></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a><span class="st">    border-radius: 4px; padding: 10px 16px; margin-top: 10px;</span></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="st">    margin-bottom: 10px; font-size: 0.95em;</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="st">  .code-box {</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a><span class="st">    background: #2b2b2b; color: #eaeaea; font-family: monospace;</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a><span class="st">    font-size: 13px; padding: 12px 16px; border-radius: 6px;</span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="st">    white-space: pre-wrap; margin-top: 8px;</span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a><span class="st">  .question-card {</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="st">    border-left: 4px solid #4C72B0;</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a><span class="st">    background: #fafafa; border-radius: 4px;</span></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="st">    padding: 10px 16px; margin-bottom: 12px;</span></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a><span class="st">  .question-tab-badge {</span></span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a><span class="st">    display: inline-block; margin-left: 8px; font-size: 0.65em;</span></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a><span class="st">    font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a><span class="st">    color: #4C72B0; background: #eef4fb; border-radius: 10px;</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a><span class="st">    padding: 2px 9px; vertical-align: middle;</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)))</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="do">## Helpers</span></span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate directly from the priors (Exponential(l) == Gamma(1, l), so</span></span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a><span class="co"># rexp() and bayesrules::plot_gamma(shape=1, rate=l) describe the same</span></span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma prior -- this reuses the book's own plotting functions.</span></span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a>simulate_prior_draws <span class="ot">&lt;-</span> <span class="cf">function</span>(m0, s0, m1, s1, l, <span class="at">n =</span> <span class="dv">200</span>) {</span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta0c =</span> <span class="fu">rnorm</span>(n, m0, s0),</span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1  =</span> <span class="fu">rnorm</span>(n, m1, s1),</span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">sigma  =</span> <span class="fu">rexp</span>(n, l)</span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a><span class="co"># beta0c is the CENTERED intercept (typical ridership at the average</span></span>
+<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a><span class="co"># temperature) -- to draw a line against raw temp_feel we decenter it,</span></span>
+<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a><span class="co"># exactly the beta0 vs beta0c distinction from the book's Figure 9.3.</span></span>
+<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a>prior_line_df <span class="ot">&lt;-</span> <span class="cf">function</span>(draws, x_seq) {</span>
+<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a>  draws <span class="sc">%&gt;%</span></span>
+<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">draw_id =</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">crossing</span>(<span class="at">x =</span> x_seq) <span class="sc">%&gt;%</span></span>
+<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">mu =</span> beta0c <span class="sc">+</span> beta1 <span class="sc">*</span> (x <span class="sc">-</span> mean_temp))</span>
+<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a>stan_call_text <span class="ot">&lt;-</span> <span class="cf">function</span>(m0, s0, m1, s1, l, prior_pd, chains, iter) {</span>
+<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(</span>
+<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(</span>
+<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a>      <span class="st">"stan_glm(</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  rides ~ temp_feel, data = bikes,</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  family = gaussian,</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  prior_intercept = normal(%s, %s),</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  prior = normal(%s, %s),</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  prior_aux = exponential(%s),</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  chains = %d, iter = %d, seed = 84735%s)"</span></span>
+<span id="cb27-90"><a href="#cb27-90" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a>    m0, s0, m1, s1, l, chains, iter,</span>
+<span id="cb27-92"><a href="#cb27-92" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (prior_pd) <span class="st">",</span><span class="sc">\n</span><span class="st">  prior_PD = TRUE"</span> <span class="cf">else</span> <span class="st">""</span></span>
+<span id="cb27-93"><a href="#cb27-93" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-95"><a href="#cb27-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-96"><a href="#cb27-96" aria-hidden="true" tabindex="-1"></a><span class="co"># One reference card per question: a tab badge and the prompt, no</span></span>
+<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a><span class="co"># answer box -- answers go in the comment block at the top of this</span></span>
+<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a><span class="co"># script instead, so they persist with the file rather than the app.</span></span>
+<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a>question_card <span class="ot">&lt;-</span> <span class="cf">function</span>(n, tab, prompt) {</span>
+<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"question-card"</span>,</span>
+<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a>      <span class="fu">h5</span>(<span class="fu">sprintf</span>(<span class="st">"Question %d"</span>, n), tags<span class="sc">$</span><span class="fu">span</span>(<span class="at">class =</span> <span class="st">"question-tab-badge"</span>, tab)),</span>
+<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>      <span class="fu">p</span>(prompt)</span>
+<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a><span class="do">## UI</span></span>
+<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">navbarPage</span>(</span>
+<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Bayesian Bike Regression"</span>,</span>
+<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">header =</span> app_css,</span>
+<span id="cb27-113"><a href="#cb27-113" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ---------------- TAB 1: Tune the prior ----------------</span></span>
+<span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabPanel</span>(</span>
+<span id="cb27-116"><a href="#cb27-116" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1. Tune the Prior"</span>,</span>
+<span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sidebarLayout</span>(</span>
+<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sidebarPanel</span>(</span>
+<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"story-panel"</span>,</span>
+<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"The three unknowns:"</span>), <span class="st">" beta0c (typical ridership at "</span>,</span>
+<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a>            <span class="st">"the average temperature), beta1 (change in ridership per "</span>,</span>
+<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a>            <span class="st">"degree), and sigma (day-to-day scatter around the line). "</span>,</span>
+<span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Drag the sliders and watch the plots and the code below "</span>,</span>
+<span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a>            <span class="st">"update together."</span></span>
+<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h4</span>(<span class="st">"beta0c ~ Normal(m0, s0)"</span>),</span>
+<span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sliderInput</span>(<span class="st">"m0"</span>, <span class="st">"m0 (typical ridership at avg. temp)"</span>, <span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">5000</span>, <span class="at">step =</span> <span class="dv">100</span>),</span>
+<span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sliderInput</span>(<span class="st">"s0"</span>, <span class="st">"s0 (uncertainty around that typical value)"</span>, <span class="dv">100</span>, <span class="dv">3000</span>, <span class="dv">1000</span>, <span class="at">step =</span> <span class="dv">50</span>),</span>
+<span id="cb27-129"><a href="#cb27-129" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h4</span>(<span class="st">"beta1 ~ Normal(m1, s1)"</span>),</span>
+<span id="cb27-130"><a href="#cb27-130" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sliderInput</span>(<span class="st">"m1"</span>, <span class="st">"m1 (typical change per degree)"</span>, <span class="sc">-</span><span class="dv">50</span>, <span class="dv">300</span>, <span class="dv">100</span>, <span class="at">step =</span> <span class="dv">5</span>),</span>
+<span id="cb27-131"><a href="#cb27-131" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sliderInput</span>(<span class="st">"s1"</span>, <span class="st">"s1 (uncertainty around that change)"</span>, <span class="dv">5</span>, <span class="dv">150</span>, <span class="dv">40</span>, <span class="at">step =</span> <span class="dv">5</span>),</span>
+<span id="cb27-132"><a href="#cb27-132" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h4</span>(<span class="st">"sigma ~ Exponential(l)"</span>),</span>
+<span id="cb27-133"><a href="#cb27-133" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sliderInput</span>(<span class="st">"l"</span>, <span class="st">"l (rate; E(sigma) = 1/l)"</span>, <span class="fl">0.0002</span>, <span class="fl">0.005</span>, <span class="fl">0.0008</span>, <span class="at">step =</span> <span class="fl">0.0001</span>),</span>
+<span id="cb27-134"><a href="#cb27-134" aria-hidden="true" tabindex="-1"></a>        <span class="fu">actionButton</span>(<span class="st">"reset_prior"</span>, <span class="st">"Reset to the text's priors"</span>),</span>
+<span id="cb27-135"><a href="#cb27-135" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-136"><a href="#cb27-136" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"Reading a 95% range from mean and SD:"</span>), <span class="st">" for a Normal "</span>,</span>
+<span id="cb27-137"><a href="#cb27-137" aria-hidden="true" tabindex="-1"></a>            <span class="st">"distribution, 95% of the plausible values fall within about "</span>,</span>
+<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a>            <span class="st">"mean \u00b1 1.96\u00d7SD -- not \u00b1SD (that's only the 68% range). "</span>,</span>
+<span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a>            <span class="st">"So Normal(100, 40) puts 95% of its mass between roughly "</span>,</span>
+<span id="cb27-140"><a href="#cb27-140" aria-hidden="true" tabindex="-1"></a>            <span class="st">"100 - 1.96(40) = 22 and 100 + 1.96(40) = 178, not the 60-140 "</span>,</span>
+<span id="cb27-141"><a href="#cb27-141" aria-hidden="true" tabindex="-1"></a>            <span class="st">"you'd get from just \u00b1SD."</span></span>
+<span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-144"><a href="#cb27-144" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"Why sigma's curve looks so different:"</span>), <span class="st">" beta0c and "</span>,</span>
+<span id="cb27-145"><a href="#cb27-145" aria-hidden="true" tabindex="-1"></a>            <span class="st">"beta1 use Normal priors, which are symmetric -- their mean, "</span>,</span>
+<span id="cb27-146"><a href="#cb27-146" aria-hidden="true" tabindex="-1"></a>            <span class="st">"median, and peak (mode) all sit at the same spot. sigma's "</span>,</span>
+<span id="cb27-147"><a href="#cb27-147" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Exponential prior is NOT symmetric: it peaks at 0, but its "</span>,</span>
+<span id="cb27-148"><a href="#cb27-148" aria-hidden="true" tabindex="-1"></a>            tags<span class="sc">$</span><span class="fu">em</span>(<span class="st">"mean"</span>), <span class="st">" (E(sigma) = 1/l) sits well to the right of "</span>,</span>
+<span id="cb27-149"><a href="#cb27-149" aria-hidden="true" tabindex="-1"></a>            <span class="st">"that peak, pulled there by a long thin tail of larger values. "</span>,</span>
+<span id="cb27-150"><a href="#cb27-150" aria-hidden="true" tabindex="-1"></a>            <span class="st">"The peak tells you the single most likely value; the mean is "</span>,</span>
+<span id="cb27-151"><a href="#cb27-151" aria-hidden="true" tabindex="-1"></a>            <span class="st">"a full weighted average across the whole tail. They're both "</span>,</span>
+<span id="cb27-152"><a href="#cb27-152" aria-hidden="true" tabindex="-1"></a>            <span class="st">"correct descriptions of the same curve -- they're just "</span>,</span>
+<span id="cb27-153"><a href="#cb27-153" aria-hidden="true" tabindex="-1"></a>            <span class="st">"answering different questions (</span><span class="sc">\"</span><span class="st">what's most likely?</span><span class="sc">\"</span><span class="st"> vs. "</span>,</span>
+<span id="cb27-154"><a href="#cb27-154" aria-hidden="true" tabindex="-1"></a>            <span class="st">"</span><span class="sc">\"</span><span class="st">what's the long-run average?</span><span class="sc">\"</span><span class="st">)."</span></span>
+<span id="cb27-155"><a href="#cb27-155" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-156"><a href="#cb27-156" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-157"><a href="#cb27-157" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"Why sigma can't go negative:"</span>), <span class="st">" sigma measures "</span>,</span>
+<span id="cb27-158"><a href="#cb27-158" aria-hidden="true" tabindex="-1"></a>            <span class="st">"spread -- how far typical days scatter from the average. "</span>,</span>
+<span id="cb27-159"><a href="#cb27-159" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Spread can't be negative any more than a distance can. The "</span>,</span>
+<span id="cb27-160"><a href="#cb27-160" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Exponential formula itself enforces this: it's only defined "</span>,</span>
+<span id="cb27-161"><a href="#cb27-161" aria-hidden="true" tabindex="-1"></a>            <span class="st">"for sigma \u2265 0. Normal priors, by contrast, are fine for "</span>,</span>
+<span id="cb27-162"><a href="#cb27-162" aria-hidden="true" tabindex="-1"></a>            <span class="st">"beta0c and beta1 because those parameters really can be any "</span>,</span>
+<span id="cb27-163"><a href="#cb27-163" aria-hidden="true" tabindex="-1"></a>            <span class="st">"real number -- including 0 or negative."</span></span>
+<span id="cb27-164"><a href="#cb27-164" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-165"><a href="#cb27-165" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb27-166"><a href="#cb27-166" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mainPanel</span>(</span>
+<span id="cb27-167"><a href="#cb27-167" aria-hidden="true" tabindex="-1"></a>        <span class="fu">uiOutput</span>(<span class="st">"priorStatement"</span>),</span>
+<span id="cb27-168"><a href="#cb27-168" aria-hidden="true" tabindex="-1"></a>        <span class="fu">fluidRow</span>(</span>
+<span id="cb27-169"><a href="#cb27-169" aria-hidden="true" tabindex="-1"></a>          <span class="fu">column</span>(<span class="dv">4</span>, <span class="fu">plotOutput</span>(<span class="st">"beta0Plot"</span>, <span class="at">height =</span> <span class="st">"220px"</span>)),</span>
+<span id="cb27-170"><a href="#cb27-170" aria-hidden="true" tabindex="-1"></a>          <span class="fu">column</span>(<span class="dv">4</span>, <span class="fu">plotOutput</span>(<span class="st">"beta1Plot"</span>, <span class="at">height =</span> <span class="st">"220px"</span>)),</span>
+<span id="cb27-171"><a href="#cb27-171" aria-hidden="true" tabindex="-1"></a>          <span class="fu">column</span>(<span class="dv">4</span>, <span class="fu">plotOutput</span>(<span class="st">"sigmaPlot"</span>, <span class="at">height =</span> <span class="st">"220px"</span>))</span>
+<span id="cb27-172"><a href="#cb27-172" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-173"><a href="#cb27-173" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h4</span>(<span class="st">"200 prior plausible model lines"</span>),</span>
+<span id="cb27-174"><a href="#cb27-174" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotOutput</span>(<span class="st">"priorLinesPlot"</span>, <span class="at">height =</span> <span class="st">"280px"</span>),</span>
+<span id="cb27-175"><a href="#cb27-175" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-176"><a href="#cb27-176" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"Why the lines funnel together in the middle:"</span>), <span class="st">" beta0c "</span>,</span>
+<span id="cb27-177"><a href="#cb27-177" aria-hidden="true" tabindex="-1"></a>            <span class="st">"is defined as ridership at the "</span>, tags<span class="sc">$</span><span class="fu">em</span>(<span class="st">"average"</span>), <span class="st">" temperature "</span>,</span>
+<span id="cb27-178"><a href="#cb27-178" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sprintf</span>(<span class="st">"(~%.0f\u00b0F), not at 0\u00b0F"</span>, mean_temp), <span class="st">" -- so every "</span>,</span>
+<span id="cb27-179"><a href="#cb27-179" aria-hidden="true" tabindex="-1"></a>            <span class="st">"line's uncertainty is smallest right there and grows the further "</span>,</span>
+<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a>            <span class="st">"you move toward either edge, since a small disagreement about "</span>,</span>
+<span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a>            <span class="st">"the slope compounds over distance. A few lines dipping below 0 "</span>,</span>
+<span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a>            <span class="st">"rides at the cold end isn't a data problem -- it's a property "</span>,</span>
+<span id="cb27-183"><a href="#cb27-183" aria-hidden="true" tabindex="-1"></a>            <span class="st">"of the prior itself: Normal distributions don't know negative "</span>,</span>
+<span id="cb27-184"><a href="#cb27-184" aria-hidden="true" tabindex="-1"></a>            <span class="st">"ridership is impossible."</span></span>
+<span id="cb27-185"><a href="#cb27-185" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-186"><a href="#cb27-186" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h4</span>(<span class="st">"Equivalent stan_glm() code (prior only, prior_PD = TRUE)"</span>),</span>
+<span id="cb27-187"><a href="#cb27-187" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"code-box"</span>, <span class="fu">textOutput</span>(<span class="st">"priorCode"</span>))</span>
+<span id="cb27-188"><a href="#cb27-188" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-189"><a href="#cb27-189" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-190"><a href="#cb27-190" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-192"><a href="#cb27-192" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ---------------- TAB 2: Fit the posterior ----------------</span></span>
+<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabPanel</span>(</span>
+<span id="cb27-194"><a href="#cb27-194" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2. Fit the Posterior"</span>,</span>
+<span id="cb27-195"><a href="#cb27-195" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sidebarLayout</span>(</span>
+<span id="cb27-196"><a href="#cb27-196" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sidebarPanel</span>(</span>
+<span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"story-panel"</span>,</span>
+<span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"This runs real MCMC"</span>), <span class="st">" on the actual "</span>, <span class="fu">code</span>(<span class="st">"bikes"</span>),</span>
+<span id="cb27-199"><a href="#cb27-199" aria-hidden="true" tabindex="-1"></a>            <span class="st">" dataset (500 days), using the priors you just tuned on Tab 1. "</span>,</span>
+<span id="cb27-200"><a href="#cb27-200" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Unlike Tab 1's instant prior simulation, this genuinely samples "</span>,</span>
+<span id="cb27-201"><a href="#cb27-201" aria-hidden="true" tabindex="-1"></a>            <span class="st">"the posterior with Stan -- expect it to take a few seconds."</span></span>
+<span id="cb27-202"><a href="#cb27-202" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-203"><a href="#cb27-203" aria-hidden="true" tabindex="-1"></a>        <span class="fu">p</span>(<span class="fu">strong</span>(<span class="st">"Current priors (from Tab 1):"</span>)),</span>
+<span id="cb27-204"><a href="#cb27-204" aria-hidden="true" tabindex="-1"></a>        <span class="fu">verbatimTextOutput</span>(<span class="st">"currentPriorSummary"</span>),</span>
+<span id="cb27-205"><a href="#cb27-205" aria-hidden="true" tabindex="-1"></a>        <span class="fu">actionButton</span>(<span class="st">"fit_posterior"</span>, <span class="st">"Fit the posterior model"</span>, <span class="at">class =</span> <span class="st">"btn-primary"</span>),</span>
+<span id="cb27-206"><a href="#cb27-206" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hr</span>(),</span>
+<span id="cb27-207"><a href="#cb27-207" aria-hidden="true" tabindex="-1"></a>        <span class="fu">helpText</span>(<span class="st">"Uses 4 chains, 2000 iterations each (fewer than the "</span>,</span>
+<span id="cb27-208"><a href="#cb27-208" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"book's 10,000 to keep this responsive in a live demo -- "</span>,</span>
+<span id="cb27-209"><a href="#cb27-209" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"more iterations would only reduce simulation noise, not "</span>,</span>
+<span id="cb27-210"><a href="#cb27-210" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"change the substantive answer, since the real driver of "</span>,</span>
+<span id="cb27-211"><a href="#cb27-211" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"precision here is the 500 real data points, not the "</span>,</span>
+<span id="cb27-212"><a href="#cb27-212" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"chain length."</span>)</span>
+<span id="cb27-213"><a href="#cb27-213" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb27-214"><a href="#cb27-214" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mainPanel</span>(</span>
+<span id="cb27-215"><a href="#cb27-215" aria-hidden="true" tabindex="-1"></a>        <span class="fu">uiOutput</span>(<span class="st">"posteriorStatus"</span>),</span>
+<span id="cb27-216"><a href="#cb27-216" aria-hidden="true" tabindex="-1"></a>        <span class="fu">conditionalPanel</span>(</span>
+<span id="cb27-217"><a href="#cb27-217" aria-hidden="true" tabindex="-1"></a>          <span class="at">condition =</span> <span class="st">"output.modelFitted == true"</span>,</span>
+<span id="cb27-218"><a href="#cb27-218" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"Posterior summary"</span>),</span>
+<span id="cb27-219"><a href="#cb27-219" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tableOutput</span>(<span class="st">"posteriorTable"</span>),</span>
+<span id="cb27-220"><a href="#cb27-220" aria-hidden="true" tabindex="-1"></a>          <span class="fu">uiOutput</span>(<span class="st">"posteriorInterpretation"</span>),</span>
+<span id="cb27-221"><a href="#cb27-221" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"Prior belief vs. data alone vs. posterior, for beta1 specifically"</span>),</span>
+<span id="cb27-222"><a href="#cb27-222" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-223"><a href="#cb27-223" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"This is the plot Q5 is really asking for:"</span>), <span class="st">" three "</span>,</span>
+<span id="cb27-224"><a href="#cb27-224" aria-hidden="true" tabindex="-1"></a>              <span class="st">"separate estimates of </span><span class="sc">\"</span><span class="st">expected change in rides per 1-degree "</span>,</span>
+<span id="cb27-225"><a href="#cb27-225" aria-hidden="true" tabindex="-1"></a>              <span class="st">"increase</span><span class="sc">\"</span><span class="st"> side by side -- your prior belief (m1, before any "</span>,</span>
+<span id="cb27-226"><a href="#cb27-226" aria-hidden="true" tabindex="-1"></a>              <span class="st">"data), what the data alone says (a plain OLS fit, ignoring the "</span>,</span>
+<span id="cb27-227"><a href="#cb27-227" aria-hidden="true" tabindex="-1"></a>              <span class="st">"prior entirely), and the posterior (the balance between them). "</span>,</span>
+<span id="cb27-228"><a href="#cb27-228" aria-hidden="true" tabindex="-1"></a>              <span class="st">"This is the direct regression version of the prior/likelihood/"</span>,</span>
+<span id="cb27-229"><a href="#cb27-229" aria-hidden="true" tabindex="-1"></a>              <span class="st">"posterior plot from the earlier Beta-Binomial election example."</span></span>
+<span id="cb27-230"><a href="#cb27-230" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-231"><a href="#cb27-231" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tableOutput</span>(<span class="st">"beta1CompareTable"</span>),</span>
+<span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a>          <span class="fu">plotOutput</span>(<span class="st">"beta1ComparePlot"</span>, <span class="at">height =</span> <span class="st">"280px"</span>),</span>
+<span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-234"><a href="#cb27-234" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"watch the SE:"</span>), <span class="st">" the data-alone curve is built from "</span>,</span>
+<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sprintf</span>(<span class="st">"OLS's estimate (%.1f) and its standard error (%.2f)."</span>,</span>
+<span id="cb27-236"><a href="#cb27-236" aria-hidden="true" tabindex="-1"></a>                      ols_beta1_est, ols_beta1_se),</span>
+<span id="cb27-237"><a href="#cb27-237" aria-hidden="true" tabindex="-1"></a>              <span class="st">" With n = 500 real days, that standard error is small, so the "</span>,</span>
+<span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a>              <span class="st">"data-alone curve is naturally tall and narrow -- a sign of how "</span>,</span>
+<span id="cb27-239"><a href="#cb27-239" aria-hidden="true" tabindex="-1"></a>              <span class="st">"precisely 500 real observations pin down the slope, compared "</span>,</span>
+<span id="cb27-240"><a href="#cb27-240" aria-hidden="true" tabindex="-1"></a>              <span class="st">"to how spread out your prior belief (s1) was before seeing "</span>,</span>
+<span id="cb27-241"><a href="#cb27-241" aria-hidden="true" tabindex="-1"></a>              <span class="st">"any of them."</span></span>
+<span id="cb27-242"><a href="#cb27-242" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-243"><a href="#cb27-243" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"Prior belief vs. data alone vs. posterior, for beta0c (typical ridership at the average temperature)"</span>),</span>
+<span id="cb27-244"><a href="#cb27-244" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-245"><a href="#cb27-245" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"This is the plot Q10 needs:"</span>), <span class="st">" m0 and s0 set your "</span>,</span>
+<span id="cb27-246"><a href="#cb27-246" aria-hidden="true" tabindex="-1"></a>              <span class="st">"prior belief about beta0c specifically, not the raw "</span>,</span>
+<span id="cb27-247"><a href="#cb27-247" aria-hidden="true" tabindex="-1"></a>              <span class="st">"(Intercept) in the table above (that's ridership at a "</span>,</span>
+<span id="cb27-248"><a href="#cb27-248" aria-hidden="true" tabindex="-1"></a>              <span class="st">"hypothetical 0\u00b0F -- a different, less meaningful number). "</span>,</span>
+<span id="cb27-249"><a href="#cb27-249" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Try setting m0 to 10,000 (its max) on Tab 1, then refit here: "</span>,</span>
+<span id="cb27-250"><a href="#cb27-250" aria-hidden="true" tabindex="-1"></a>              <span class="st">"watch whether the green posterior curve follows the blue "</span>,</span>
+<span id="cb27-251"><a href="#cb27-251" aria-hidden="true" tabindex="-1"></a>              <span class="st">"prior curve toward 10,000, or stays anchored near the tall "</span>,</span>
+<span id="cb27-252"><a href="#cb27-252" aria-hidden="true" tabindex="-1"></a>              <span class="st">"orange data-alone curve instead."</span></span>
+<span id="cb27-253"><a href="#cb27-253" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-254"><a href="#cb27-254" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tableOutput</span>(<span class="st">"beta0cCompareTable"</span>),</span>
+<span id="cb27-255"><a href="#cb27-255" aria-hidden="true" tabindex="-1"></a>          <span class="fu">plotOutput</span>(<span class="st">"beta0cComparePlot"</span>, <span class="at">height =</span> <span class="st">"280px"</span>),</span>
+<span id="cb27-256"><a href="#cb27-256" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-257"><a href="#cb27-257" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"Why the posterior should land close to the textbook's numbers:"</span>),</span>
+<span id="cb27-258"><a href="#cb27-258" aria-hidden="true" tabindex="-1"></a>              <span class="st">" with Normal priors, there isn't a single clean number like "</span>,</span>
+<span id="cb27-259"><a href="#cb27-259" aria-hidden="true" tabindex="-1"></a>              <span class="st">"</span><span class="sc">\"</span><span class="st">alpha + beta</span><span class="sc">\"</span><span class="st"> to compare against n the way there is for a "</span>,</span>
+<span id="cb27-260"><a href="#cb27-260" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Beta prior -- but the same core idea still applies: a prior's "</span>,</span>
+<span id="cb27-261"><a href="#cb27-261" aria-hidden="true" tabindex="-1"></a>              <span class="st">"pull on the posterior depends on how tightly it's specified "</span>,</span>
+<span id="cb27-262"><a href="#cb27-262" aria-hidden="true" tabindex="-1"></a>              <span class="st">"(small s0/s1 = a more confident, more stubborn prior) relative "</span>,</span>
+<span id="cb27-263"><a href="#cb27-263" aria-hidden="true" tabindex="-1"></a>              <span class="st">"to how much real data you have. With n = 500 real days and "</span>,</span>
+<span id="cb27-264"><a href="#cb27-264" aria-hidden="true" tabindex="-1"></a>              <span class="st">"priors that are informative but not extremely narrow (s1 = 40, "</span>,</span>
+<span id="cb27-265"><a href="#cb27-265" aria-hidden="true" tabindex="-1"></a>              <span class="st">"not s1 = 2), the data comfortably dominates -- so a posterior "</span>,</span>
+<span id="cb27-266"><a href="#cb27-266" aria-hidden="true" tabindex="-1"></a>              <span class="st">"landing close to what plain OLS would give you isn't a "</span>,</span>
+<span id="cb27-267"><a href="#cb27-267" aria-hidden="true" tabindex="-1"></a>              <span class="st">"coincidence, it's exactly what you'd expect."</span></span>
+<span id="cb27-268"><a href="#cb27-268" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-269"><a href="#cb27-269" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-270"><a href="#cb27-270" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"Reading </span><span class="sc">\"</span><span class="st">P(beta1 &gt; 0 | data)</span><span class="sc">\"</span><span class="st">:"</span>), <span class="st">" this is computed by "</span>,</span>
+<span id="cb27-271"><a href="#cb27-271" aria-hidden="true" tabindex="-1"></a>              <span class="st">"literally counting what fraction of the thousands of posterior "</span>,</span>
+<span id="cb27-272"><a href="#cb27-272" aria-hidden="true" tabindex="-1"></a>              <span class="st">"draws are positive -- a direct probability statement about the "</span>,</span>
+<span id="cb27-273"><a href="#cb27-273" aria-hidden="true" tabindex="-1"></a>              <span class="st">"parameter itself. A p-value, by contrast, answers a different "</span>,</span>
+<span id="cb27-274"><a href="#cb27-274" aria-hidden="true" tabindex="-1"></a>              <span class="st">"question: </span><span class="sc">\"</span><span class="st">if the true effect were exactly zero, how surprising "</span>,</span>
+<span id="cb27-275"><a href="#cb27-275" aria-hidden="true" tabindex="-1"></a>              <span class="st">"would this data be?</span><span class="sc">\"</span><span class="st"> Both can point the same direction, but "</span>,</span>
+<span id="cb27-276"><a href="#cb27-276" aria-hidden="true" tabindex="-1"></a>              <span class="st">"only the Bayesian probability is allowed to say </span><span class="sc">\"</span><span class="st">there's an X% "</span>,</span>
+<span id="cb27-277"><a href="#cb27-277" aria-hidden="true" tabindex="-1"></a>              <span class="st">"chance the effect is positive.</span><span class="sc">\"</span><span class="st">"</span></span>
+<span id="cb27-278"><a href="#cb27-278" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-279"><a href="#cb27-279" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"50 posterior plausible model lines vs. the real data"</span>),</span>
+<span id="cb27-280"><a href="#cb27-280" aria-hidden="true" tabindex="-1"></a>          <span class="fu">plotOutput</span>(<span class="st">"posteriorLinesPlot"</span>, <span class="at">height =</span> <span class="st">"300px"</span>),</span>
+<span id="cb27-281"><a href="#cb27-281" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"Posterior distribution of beta1 (temp_feel effect)"</span>),</span>
+<span id="cb27-282"><a href="#cb27-282" aria-hidden="true" tabindex="-1"></a>          <span class="fu">plotOutput</span>(<span class="st">"beta1PosteriorPlot"</span>, <span class="at">height =</span> <span class="st">"220px"</span>),</span>
+<span id="cb27-283"><a href="#cb27-283" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"Equivalent stan_glm() code (this is the exact call used)"</span>),</span>
+<span id="cb27-284"><a href="#cb27-284" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"code-box"</span>, <span class="fu">textOutput</span>(<span class="st">"posteriorCode"</span>)),</span>
+<span id="cb27-285"><a href="#cb27-285" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"MCMC diagnostics"</span>),</span>
+<span id="cb27-286"><a href="#cb27-286" aria-hidden="true" tabindex="-1"></a>          <span class="fu">verbatimTextOutput</span>(<span class="st">"diagnostics"</span>),</span>
+<span id="cb27-287"><a href="#cb27-287" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-288"><a href="#cb27-288" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"Reading Rhat and n_eff:"</span>), <span class="st">" Rhat compares your several "</span>,</span>
+<span id="cb27-289"><a href="#cb27-289" aria-hidden="true" tabindex="-1"></a>              <span class="st">"MCMC chains against each other -- if they've all genuinely "</span>,</span>
+<span id="cb27-290"><a href="#cb27-290" aria-hidden="true" tabindex="-1"></a>              <span class="st">"converged on the same posterior, Rhat should sit right around "</span>,</span>
+<span id="cb27-291"><a href="#cb27-291" aria-hidden="true" tabindex="-1"></a>              <span class="st">"1.00 (matching what the textbook reports: 0.9999-1.0000). A "</span>,</span>
+<span id="cb27-292"><a href="#cb27-292" aria-hidden="true" tabindex="-1"></a>              <span class="st">"value noticeably above 1 (a common rule of thumb: worry above "</span>,</span>
+<span id="cb27-293"><a href="#cb27-293" aria-hidden="true" tabindex="-1"></a>              <span class="st">"roughly 1.01-1.05) means the chains disagree with each other, "</span>,</span>
+<span id="cb27-294"><a href="#cb27-294" aria-hidden="true" tabindex="-1"></a>              <span class="st">"which is a red flag that the simulation hasn't settled yet -- "</span>,</span>
+<span id="cb27-295"><a href="#cb27-295" aria-hidden="true" tabindex="-1"></a>              <span class="st">"not a statement about whether you have enough real data. "</span>,</span>
+<span id="cb27-296"><a href="#cb27-296" aria-hidden="true" tabindex="-1"></a>              <span class="st">"n_eff (effective sample size) tells you, roughly, how many "</span>,</span>
+<span id="cb27-297"><a href="#cb27-297" aria-hidden="true" tabindex="-1"></a>              <span class="st">"genuinely independent-looking draws your MCMC chain produced; "</span>,</span>
+<span id="cb27-298"><a href="#cb27-298" aria-hidden="true" tabindex="-1"></a>              <span class="st">"MCMC draws are naturally a bit correlated step-to-step, so "</span>,</span>
+<span id="cb27-299"><a href="#cb27-299" aria-hidden="true" tabindex="-1"></a>              <span class="st">"n_eff is usually somewhat smaller than the raw number of "</span>,</span>
+<span id="cb27-300"><a href="#cb27-300" aria-hidden="true" tabindex="-1"></a>              <span class="st">"iterations you asked for."</span></span>
+<span id="cb27-301"><a href="#cb27-301" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb27-302"><a href="#cb27-302" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-303"><a href="#cb27-303" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-304"><a href="#cb27-304" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-305"><a href="#cb27-305" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb27-306"><a href="#cb27-306" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-307"><a href="#cb27-307" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ---------------- TAB 3: Posterior prediction ----------------</span></span>
+<span id="cb27-308"><a href="#cb27-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabPanel</span>(</span>
+<span id="cb27-309"><a href="#cb27-309" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3. Predict Ridership"</span>,</span>
+<span id="cb27-310"><a href="#cb27-310" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sidebarLayout</span>(</span>
+<span id="cb27-311"><a href="#cb27-311" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sidebarPanel</span>(</span>
+<span id="cb27-312"><a href="#cb27-312" aria-hidden="true" tabindex="-1"></a>        <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"story-panel"</span>,</span>
+<span id="cb27-313"><a href="#cb27-313" aria-hidden="true" tabindex="-1"></a>            <span class="fu">strong</span>(<span class="st">"Requires a fitted model from Tab 2 first."</span>), <span class="st">" Once "</span>,</span>
+<span id="cb27-314"><a href="#cb27-314" aria-hidden="true" tabindex="-1"></a>            <span class="st">"fitted, this tab is fully live -- no new MCMC needed, since "</span>,</span>
+<span id="cb27-315"><a href="#cb27-315" aria-hidden="true" tabindex="-1"></a>            <span class="st">"we're just reusing the posterior draws already sitting in memory."</span></span>
+<span id="cb27-316"><a href="#cb27-316" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb27-317"><a href="#cb27-317" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sliderInput</span>(<span class="st">"temp_predict"</span>, <span class="st">"Temperature to predict for (\u00b0F)"</span>,</span>
+<span id="cb27-318"><a href="#cb27-318" aria-hidden="true" tabindex="-1"></a>                    <span class="at">min =</span> <span class="dv">20</span>, <span class="at">max =</span> <span class="dv">100</span>, <span class="at">value =</span> <span class="dv">75</span>, <span class="at">step =</span> <span class="dv">1</span>),</span>
+<span id="cb27-319"><a href="#cb27-319" aria-hidden="true" tabindex="-1"></a>        <span class="fu">helpText</span>(<span class="fu">sprintf</span>(<span class="st">"The observed data ranges from %.0f\u00b0F to %.0f\u00b0F -- "</span>,</span>
+<span id="cb27-320"><a href="#cb27-320" aria-hidden="true" tabindex="-1"></a>                         temp_range[<span class="dv">1</span>], temp_range[<span class="dv">2</span>]),</span>
+<span id="cb27-321"><a href="#cb27-321" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"predicting outside that range leans more heavily on the "</span>,</span>
+<span id="cb27-322"><a href="#cb27-322" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"model's assumed linear shape than on nearby real data."</span>)</span>
+<span id="cb27-323"><a href="#cb27-323" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb27-324"><a href="#cb27-324" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mainPanel</span>(</span>
+<span id="cb27-325"><a href="#cb27-325" aria-hidden="true" tabindex="-1"></a>        <span class="fu">uiOutput</span>(<span class="st">"predictionStatus"</span>),</span>
+<span id="cb27-326"><a href="#cb27-326" aria-hidden="true" tabindex="-1"></a>        <span class="fu">conditionalPanel</span>(</span>
+<span id="cb27-327"><a href="#cb27-327" aria-hidden="true" tabindex="-1"></a>          <span class="at">condition =</span> <span class="st">"output.modelFitted == true"</span>,</span>
+<span id="cb27-328"><a href="#cb27-328" aria-hidden="true" tabindex="-1"></a>          <span class="fu">uiOutput</span>(<span class="st">"predictionStatement"</span>),</span>
+<span id="cb27-329"><a href="#cb27-329" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-330"><a href="#cb27-330" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"mu vs. the posterior predictive -- two different questions:"</span>),</span>
+<span id="cb27-331"><a href="#cb27-331" aria-hidden="true" tabindex="-1"></a>              <span class="st">" mu asks </span><span class="sc">\"</span><span class="st">what's the average ridership across "</span>, tags<span class="sc">$</span><span class="fu">em</span>(<span class="st">"all"</span>),</span>
+<span id="cb27-332"><a href="#cb27-332" aria-hidden="true" tabindex="-1"></a>              <span class="st">" days at this temperature?</span><span class="sc">\"</span><span class="st"> -- it's narrow because averaging "</span>,</span>
+<span id="cb27-333"><a href="#cb27-333" aria-hidden="true" tabindex="-1"></a>              <span class="st">"smooths out day-to-day noise. The posterior predictive asks "</span>,</span>
+<span id="cb27-334"><a href="#cb27-334" aria-hidden="true" tabindex="-1"></a>              <span class="st">"</span><span class="sc">\"</span><span class="st">what will happen on "</span>, tags<span class="sc">$</span><span class="fu">em</span>(<span class="st">"one specific"</span>), <span class="st">" day at this "</span>,</span>
+<span id="cb27-335"><a href="#cb27-335" aria-hidden="true" tabindex="-1"></a>              <span class="st">"temperature?</span><span class="sc">\"</span><span class="st"> -- it has to add real day-to-day scatter (sigma) "</span>,</span>
+<span id="cb27-336"><a href="#cb27-336" aria-hidden="true" tabindex="-1"></a>              <span class="st">"on top of the same uncertainty mu already has, which is why the "</span>,</span>
+<span id="cb27-337"><a href="#cb27-337" aria-hidden="true" tabindex="-1"></a>              <span class="st">"orange curve is always wider than the blue one."</span></span>
+<span id="cb27-338"><a href="#cb27-338" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-339"><a href="#cb27-339" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"concept-panel"</span>,</span>
+<span id="cb27-340"><a href="#cb27-340" aria-hidden="true" tabindex="-1"></a>              <span class="fu">strong</span>(<span class="st">"A real limitation, visible at cold temperatures:"</span>), <span class="st">" a "</span>,</span>
+<span id="cb27-341"><a href="#cb27-341" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Normal distribution technically allows any real number, "</span>,</span>
+<span id="cb27-342"><a href="#cb27-342" aria-hidden="true" tabindex="-1"></a>              <span class="st">"including negative ones -- so at cold temperatures, where "</span>,</span>
+<span id="cb27-343"><a href="#cb27-343" aria-hidden="true" tabindex="-1"></a>              <span class="st">"typical ridership is already low, the posterior predictive's "</span>,</span>
+<span id="cb27-344"><a href="#cb27-344" aria-hidden="true" tabindex="-1"></a>              <span class="st">"left tail can dip below 0 rides. That's not a bug in the "</span>,</span>
+<span id="cb27-345"><a href="#cb27-345" aria-hidden="true" tabindex="-1"></a>              <span class="st">"simulation; it's an honest sign that a plain Normal model is "</span>,</span>
+<span id="cb27-346"><a href="#cb27-346" aria-hidden="true" tabindex="-1"></a>              <span class="st">"only an approximation, one that strains more at the extremes "</span>,</span>
+<span id="cb27-347"><a href="#cb27-347" aria-hidden="true" tabindex="-1"></a>              <span class="st">"than in the middle of the observed data."</span></span>
+<span id="cb27-348"><a href="#cb27-348" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-349"><a href="#cb27-349" aria-hidden="true" tabindex="-1"></a>          <span class="fu">plotOutput</span>(<span class="st">"predictionPlot"</span>, <span class="at">height =</span> <span class="st">"280px"</span>),</span>
+<span id="cb27-350"><a href="#cb27-350" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"The by-hand simulation code (what's actually happening)"</span>),</span>
+<span id="cb27-351"><a href="#cb27-351" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"code-box"</span>, <span class="fu">textOutput</span>(<span class="st">"predictionCode"</span>)),</span>
+<span id="cb27-352"><a href="#cb27-352" aria-hidden="true" tabindex="-1"></a>          <span class="fu">h4</span>(<span class="st">"The rstanarm shortcut (same answer, one line)"</span>),</span>
+<span id="cb27-353"><a href="#cb27-353" aria-hidden="true" tabindex="-1"></a>          <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"code-box"</span>, <span class="fu">textOutput</span>(<span class="st">"shortcutCode"</span>))</span>
+<span id="cb27-354"><a href="#cb27-354" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-355"><a href="#cb27-355" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-356"><a href="#cb27-356" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-357"><a href="#cb27-357" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb27-358"><a href="#cb27-358" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-359"><a href="#cb27-359" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ---------------- TAB 4: Questions ----------------</span></span>
+<span id="cb27-360"><a href="#cb27-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabPanel</span>(</span>
+<span id="cb27-361"><a href="#cb27-361" aria-hidden="true" tabindex="-1"></a>    <span class="st">"4. Questions"</span>,</span>
+<span id="cb27-362"><a href="#cb27-362" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fluidPage</span>(</span>
+<span id="cb27-363"><a href="#cb27-363" aria-hidden="true" tabindex="-1"></a>      <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"story-panel"</span>,</span>
+<span id="cb27-364"><a href="#cb27-364" aria-hidden="true" tabindex="-1"></a>          <span class="fu">strong</span>(<span class="st">"How to use this tab:"</span>), <span class="st">" Each question names which tab "</span>,</span>
+<span id="cb27-365"><a href="#cb27-365" aria-hidden="true" tabindex="-1"></a>          <span class="st">"to work in. Set the sliders, read off the app's numbers, then "</span>,</span>
+<span id="cb27-366"><a href="#cb27-366" aria-hidden="true" tabindex="-1"></a>          <span class="st">"write your answer as a comment at the top of "</span>, <span class="fu">code</span>(<span class="st">"app.R"</span>),</span>
+<span id="cb27-367"><a href="#cb27-367" aria-hidden="true" tabindex="-1"></a>          <span class="st">" (the script you're running this from) -- that way your "</span>,</span>
+<span id="cb27-368"><a href="#cb27-368" aria-hidden="true" tabindex="-1"></a>          <span class="st">"answers are saved with the script itself, not lost when you "</span>,</span>
+<span id="cb27-369"><a href="#cb27-369" aria-hidden="true" tabindex="-1"></a>          <span class="st">"close the app."</span></span>
+<span id="cb27-370"><a href="#cb27-370" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb27-371"><a href="#cb27-371" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">1</span>, <span class="st">"Tab 1"</span>, <span class="st">"Set m1 = 100, s1 = 40 (the book's defaults). By hand, using mean +/- 1.96*SD, calculate the 95% plausible range for beta1. Check your answer against what the app reports."</span>),</span>
+<span id="cb27-372"><a href="#cb27-372" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">2</span>, <span class="st">"Tab 1"</span>, <span class="st">"Increase s1 from 40 to 80, keeping m1 = 100. What happens to the spread of the </span><span class="sc">\"</span><span class="st">200 prior plausible lines</span><span class="sc">\"</span><span class="st"> plot? Explain in one sentence why."</span>),</span>
+<span id="cb27-373"><a href="#cb27-373" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">3</span>, <span class="st">"Tab 1"</span>, <span class="st">"Set l (sigma's rate) to 0.002, then to 0.0003. Compare the two sigma prior plots. Which one reflects a stronger belief that ridership is tightly predicted by temperature alone?"</span>),</span>
+<span id="cb27-374"><a href="#cb27-374" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">4</span>, <span class="st">"Tab 1"</span>, <span class="st">"The sigma prior plot peaks at 0, not in the middle like the beta0c and beta1 plots. Why? (Hint: what values is sigma even allowed to take?)"</span>),</span>
+<span id="cb27-375"><a href="#cb27-375" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">5</span>, <span class="st">"Tab 2"</span>, <span class="st">"Reset to the book's default priors and fit the posterior. Report the posterior median for the Intercept and for temp_feel. How closely do they match the textbook's own values (-2194.24 and 82.16)? Given how large n = 500 is relative to this prior's strength, is that closeness surprising, or exactly what you'd expect? Explain using the weight-of-evidence idea."</span>),</span>
+<span id="cb27-376"><a href="#cb27-376" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">6</span>, <span class="st">"Tab 2"</span>, <span class="st">"What does </span><span class="sc">\"</span><span class="st">P(beta1 &gt; 0 | data)</span><span class="sc">\"</span><span class="st"> actually tell you, and why is this a genuine probability statement rather than a p-value?"</span>),</span>
+<span id="cb27-377"><a href="#cb27-377" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">7</span>, <span class="st">"Tab 2"</span>, <span class="st">"Look at the MCMC diagnostics table (Rhat, n_eff). What would an Rhat far from 1 (say, 1.5) suggest about the chains?"</span>),</span>
+<span id="cb27-378"><a href="#cb27-378" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">8</span>, <span class="st">"Tab 3"</span>, <span class="st">"Predict ridership at 75\u00b0F. Record both credible intervals shown: </span><span class="sc">\"</span><span class="st">typical ridership (mu)</span><span class="sc">\"</span><span class="st"> and </span><span class="sc">\"</span><span class="st">one day's ridership (posterior predictive).</span><span class="sc">\"</span><span class="st"> Which is wider, and why?"</span>),</span>
+<span id="cb27-379"><a href="#cb27-379" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">9</span>, <span class="st">"Tab 3"</span>, <span class="st">"Now predict at a much colder temperature, like 30\u00b0F. Does the posterior predictive interval's lower bound dip below zero? What limitation of using a Normal distribution for ridership does that reveal?"</span>),</span>
+<span id="cb27-380"><a href="#cb27-380" aria-hidden="true" tabindex="-1"></a>      <span class="fu">question_card</span>(<span class="dv">10</span>, <span class="st">"Tab 1 + Tab 2, extends Q5"</span>, <span class="st">"The m0 slider only goes up to 10,000. In Q5 you fit the posterior with the default m0 = 5,000 and found the posterior intercept near -2194. Now set m0 to its max, 10,000 -- double your original prior belief -- keep everything else the same, and refit. Use the </span><span class="sc">\"</span><span class="st">Prior belief vs. data alone vs. posterior, for beta0c</span><span class="sc">\"</span><span class="st"> plot to see it directly: does the posterior follow the prior toward 10,000, or stay anchored near the data-alone curve? Explain using weight-of-evidence: compare how confidently you specified m0 (via s0) to how much real data you have (n = 500)."</span>)</span>
+<span id="cb27-381"><a href="#cb27-381" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-382"><a href="#cb27-382" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-383"><a href="#cb27-383" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-384"><a href="#cb27-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-385"><a href="#cb27-385" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<span id="cb27-386"><a href="#cb27-386" aria-hidden="true" tabindex="-1"></a><span class="do">## Server</span></span>
+<span id="cb27-387"><a href="#cb27-387" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<span id="cb27-388"><a href="#cb27-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-389"><a href="#cb27-389" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb27-390"><a href="#cb27-390" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-391"><a href="#cb27-391" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ===== TAB 1: Prior tuning (instant, no MCMC) =====</span></span>
+<span id="cb27-392"><a href="#cb27-392" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-393"><a href="#cb27-393" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>reset_prior, {</span>
+<span id="cb27-394"><a href="#cb27-394" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateSliderInput</span>(session, <span class="st">"m0"</span>, <span class="at">value =</span> <span class="dv">5000</span>)</span>
+<span id="cb27-395"><a href="#cb27-395" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateSliderInput</span>(session, <span class="st">"s0"</span>, <span class="at">value =</span> <span class="dv">1000</span>)</span>
+<span id="cb27-396"><a href="#cb27-396" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateSliderInput</span>(session, <span class="st">"m1"</span>, <span class="at">value =</span> <span class="dv">100</span>)</span>
+<span id="cb27-397"><a href="#cb27-397" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateSliderInput</span>(session, <span class="st">"s1"</span>, <span class="at">value =</span> <span class="dv">40</span>)</span>
+<span id="cb27-398"><a href="#cb27-398" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateSliderInput</span>(session, <span class="st">"l"</span>, <span class="at">value =</span> <span class="fl">0.0008</span>)</span>
+<span id="cb27-399"><a href="#cb27-399" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-400"><a href="#cb27-400" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-401"><a href="#cb27-401" aria-hidden="true" tabindex="-1"></a>  prior_draws <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb27-402"><a href="#cb27-402" aria-hidden="true" tabindex="-1"></a>    <span class="fu">simulate_prior_draws</span>(input<span class="sc">$</span>m0, input<span class="sc">$</span>s0, input<span class="sc">$</span>m1, input<span class="sc">$</span>s1, input<span class="sc">$</span>l, <span class="at">n =</span> <span class="dv">200</span>)</span>
+<span id="cb27-403"><a href="#cb27-403" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-404"><a href="#cb27-404" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-405"><a href="#cb27-405" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>priorStatement <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb27-406"><a href="#cb27-406" aria-hidden="true" tabindex="-1"></a>    m0 <span class="ot">&lt;-</span> input<span class="sc">$</span>m0; s0 <span class="ot">&lt;-</span> input<span class="sc">$</span>s0; m1 <span class="ot">&lt;-</span> input<span class="sc">$</span>m1; s1 <span class="ot">&lt;-</span> input<span class="sc">$</span>s1; l <span class="ot">&lt;-</span> input<span class="sc">$</span>l</span>
+<span id="cb27-407"><a href="#cb27-407" aria-hidden="true" tabindex="-1"></a>    <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"interp-panel"</span>,</span>
+<span id="cb27-408"><a href="#cb27-408" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sprintf</span>(</span>
+<span id="cb27-409"><a href="#cb27-409" aria-hidden="true" tabindex="-1"></a>          <span class="fu">paste0</span>(</span>
+<span id="cb27-410"><a href="#cb27-410" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Before seeing any data: on a typical (~%.0f\u00b0F) day, you expect "</span>,</span>
+<span id="cb27-411"><a href="#cb27-411" aria-hidden="true" tabindex="-1"></a>            <span class="st">"about %.0f riders (95%% plausible range roughly %.0f to %.0f). For "</span>,</span>
+<span id="cb27-412"><a href="#cb27-412" aria-hidden="true" tabindex="-1"></a>            <span class="st">"every one-degree increase in temperature, you expect ridership to "</span>,</span>
+<span id="cb27-413"><a href="#cb27-413" aria-hidden="true" tabindex="-1"></a>            <span class="st">"change by about %.0f rides (95%% plausible range roughly %.0f to "</span>,</span>
+<span id="cb27-414"><a href="#cb27-414" aria-hidden="true" tabindex="-1"></a>            <span class="st">"%.0f). Day-to-day scatter around that average is expected to be "</span>,</span>
+<span id="cb27-415"><a href="#cb27-415" aria-hidden="true" tabindex="-1"></a>            <span class="st">"about %.0f rides (E(sigma) = 1/l)."</span></span>
+<span id="cb27-416"><a href="#cb27-416" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-417"><a href="#cb27-417" aria-hidden="true" tabindex="-1"></a>          mean_temp, m0, m0 <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>s0, m0 <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>s0,</span>
+<span id="cb27-418"><a href="#cb27-418" aria-hidden="true" tabindex="-1"></a>          m1, m1 <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>s1, m1 <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>s1,</span>
+<span id="cb27-419"><a href="#cb27-419" aria-hidden="true" tabindex="-1"></a>          <span class="dv">1</span><span class="sc">/</span>l</span>
+<span id="cb27-420"><a href="#cb27-420" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-421"><a href="#cb27-421" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-422"><a href="#cb27-422" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-423"><a href="#cb27-423" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-424"><a href="#cb27-424" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta0Plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-425"><a href="#cb27-425" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_normal</span>(<span class="at">mean =</span> input<span class="sc">$</span>m0, <span class="at">sd =</span> input<span class="sc">$</span>s0) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"beta0c"</span>, <span class="at">y =</span> <span class="st">"pdf"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb27-426"><a href="#cb27-426" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-427"><a href="#cb27-427" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta1Plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-428"><a href="#cb27-428" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_normal</span>(<span class="at">mean =</span> input<span class="sc">$</span>m1, <span class="at">sd =</span> input<span class="sc">$</span>s1) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"beta1"</span>, <span class="at">y =</span> <span class="st">"pdf"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb27-429"><a href="#cb27-429" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-430"><a href="#cb27-430" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>sigmaPlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-431"><a href="#cb27-431" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_gamma</span>(<span class="at">shape =</span> <span class="dv">1</span>, <span class="at">rate =</span> input<span class="sc">$</span>l) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"sigma"</span>, <span class="at">y =</span> <span class="st">"pdf"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb27-432"><a href="#cb27-432" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-433"><a href="#cb27-433" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-434"><a href="#cb27-434" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>priorLinesPlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-435"><a href="#cb27-435" aria-hidden="true" tabindex="-1"></a>    x_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(temp_range[<span class="dv">1</span>], temp_range[<span class="dv">2</span>], <span class="at">length.out =</span> <span class="dv">50</span>)</span>
+<span id="cb27-436"><a href="#cb27-436" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prior_line_df</span>(<span class="fu">prior_draws</span>(), x_seq) <span class="sc">%&gt;%</span></span>
+<span id="cb27-437"><a href="#cb27-437" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> mu, <span class="at">group =</span> draw_id)) <span class="sc">+</span></span>
+<span id="cb27-438"><a href="#cb27-438" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">color =</span> <span class="st">"#4C72B0"</span>) <span class="sc">+</span></span>
+<span id="cb27-439"><a href="#cb27-439" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"temp_feel"</span>, <span class="at">y =</span> <span class="st">"rides"</span>,</span>
+<span id="cb27-440"><a href="#cb27-440" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"200 prior plausible relationships between temp_feel and rides"</span>) <span class="sc">+</span></span>
+<span id="cb27-441"><a href="#cb27-441" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>)</span>
+<span id="cb27-442"><a href="#cb27-442" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-443"><a href="#cb27-443" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-444"><a href="#cb27-444" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>priorCode <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb27-445"><a href="#cb27-445" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stan_call_text</span>(input<span class="sc">$</span>m0, input<span class="sc">$</span>s0, input<span class="sc">$</span>m1, input<span class="sc">$</span>s1, input<span class="sc">$</span>l,</span>
+<span id="cb27-446"><a href="#cb27-446" aria-hidden="true" tabindex="-1"></a>                   <span class="at">prior_pd =</span> <span class="cn">TRUE</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">2000</span>)</span>
+<span id="cb27-447"><a href="#cb27-447" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-448"><a href="#cb27-448" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-449"><a href="#cb27-449" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ===== TAB 2: Real posterior fit (MCMC, behind a button) =====</span></span>
+<span id="cb27-450"><a href="#cb27-450" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-451"><a href="#cb27-451" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>currentPriorSummary <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb27-452"><a href="#cb27-452" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">"beta0c ~ Normal(%s, %s)</span><span class="sc">\n</span><span class="st">beta1  ~ Normal(%s, %s)</span><span class="sc">\n</span><span class="st">sigma  ~ Exponential(%s)"</span>,</span>
+<span id="cb27-453"><a href="#cb27-453" aria-hidden="true" tabindex="-1"></a>            input<span class="sc">$</span>m0, input<span class="sc">$</span>s0, input<span class="sc">$</span>m1, input<span class="sc">$</span>s1, input<span class="sc">$</span>l)</span>
+<span id="cb27-454"><a href="#cb27-454" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-455"><a href="#cb27-455" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-456"><a href="#cb27-456" aria-hidden="true" tabindex="-1"></a>  fitted_model <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>(<span class="cn">NULL</span>)</span>
+<span id="cb27-457"><a href="#cb27-457" aria-hidden="true" tabindex="-1"></a>  fitted_draws <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>(<span class="cn">NULL</span>)</span>
+<span id="cb27-458"><a href="#cb27-458" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-459"><a href="#cb27-459" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>fit_posterior, {</span>
+<span id="cb27-460"><a href="#cb27-460" aria-hidden="true" tabindex="-1"></a>    <span class="fu">withProgress</span>(<span class="at">message =</span> <span class="st">"Running MCMC (stan_glm)..."</span>, <span class="at">value =</span> <span class="fl">0.3</span>, {</span>
+<span id="cb27-461"><a href="#cb27-461" aria-hidden="true" tabindex="-1"></a>      m <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
+<span id="cb27-462"><a href="#cb27-462" aria-hidden="true" tabindex="-1"></a>        rides <span class="sc">~</span> temp_feel, <span class="at">data =</span> bikes_data, <span class="at">family =</span> gaussian,</span>
+<span id="cb27-463"><a href="#cb27-463" aria-hidden="true" tabindex="-1"></a>        <span class="at">prior_intercept =</span> <span class="fu">normal</span>(input<span class="sc">$</span>m0, input<span class="sc">$</span>s0),</span>
+<span id="cb27-464"><a href="#cb27-464" aria-hidden="true" tabindex="-1"></a>        <span class="at">prior =</span> <span class="fu">normal</span>(input<span class="sc">$</span>m1, input<span class="sc">$</span>s1),</span>
+<span id="cb27-465"><a href="#cb27-465" aria-hidden="true" tabindex="-1"></a>        <span class="at">prior_aux =</span> <span class="fu">exponential</span>(input<span class="sc">$</span>l),</span>
+<span id="cb27-466"><a href="#cb27-466" aria-hidden="true" tabindex="-1"></a>        <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">seed =</span> <span class="dv">84735</span>, <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb27-467"><a href="#cb27-467" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-468"><a href="#cb27-468" aria-hidden="true" tabindex="-1"></a>      <span class="fu">incProgress</span>(<span class="fl">0.6</span>)</span>
+<span id="cb27-469"><a href="#cb27-469" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fitted_model</span>(m)</span>
+<span id="cb27-470"><a href="#cb27-470" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fitted_draws</span>(<span class="fu">as.data.frame</span>(m))</span>
+<span id="cb27-471"><a href="#cb27-471" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb27-472"><a href="#cb27-472" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-473"><a href="#cb27-473" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-474"><a href="#cb27-474" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>modelFitted <span class="ot">&lt;-</span> <span class="fu">reactive</span>({ <span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">fitted_model</span>()) })</span>
+<span id="cb27-475"><a href="#cb27-475" aria-hidden="true" tabindex="-1"></a>  <span class="fu">outputOptions</span>(output, <span class="st">"modelFitted"</span>, <span class="at">suspendWhenHidden =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-476"><a href="#cb27-476" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-477"><a href="#cb27-477" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>posteriorStatus <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb27-478"><a href="#cb27-478" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">fitted_model</span>())) {</span>
+<span id="cb27-479"><a href="#cb27-479" aria-hidden="true" tabindex="-1"></a>      <span class="fu">p</span>(<span class="fu">em</span>(<span class="st">"Click </span><span class="sc">\"</span><span class="st">Fit the posterior model</span><span class="sc">\"</span><span class="st"> to run MCMC on the real bikes data."</span>))</span>
+<span id="cb27-480"><a href="#cb27-480" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb27-481"><a href="#cb27-481" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NULL</span></span>
+<span id="cb27-482"><a href="#cb27-482" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-483"><a href="#cb27-483" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-484"><a href="#cb27-484" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-485"><a href="#cb27-485" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>posteriorTable <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb27-486"><a href="#cb27-486" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-487"><a href="#cb27-487" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fitted_draws</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-488"><a href="#cb27-488" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"parameter"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-489"><a href="#cb27-489" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(parameter) <span class="sc">%&gt;%</span></span>
+<span id="cb27-490"><a href="#cb27-490" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarize</span>(</span>
+<span id="cb27-491"><a href="#cb27-491" aria-hidden="true" tabindex="-1"></a>        <span class="at">median =</span> <span class="fu">median</span>(value),</span>
+<span id="cb27-492"><a href="#cb27-492" aria-hidden="true" tabindex="-1"></a>        <span class="st">`</span><span class="at">2.5%</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">quantile</span>(value, <span class="fl">0.025</span>),</span>
+<span id="cb27-493"><a href="#cb27-493" aria-hidden="true" tabindex="-1"></a>        <span class="st">`</span><span class="at">97.5%</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">quantile</span>(value, <span class="fl">0.975</span>),</span>
+<span id="cb27-494"><a href="#cb27-494" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb27-495"><a href="#cb27-495" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-496"><a href="#cb27-496" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb27-497"><a href="#cb27-497" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-498"><a href="#cb27-498" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>posteriorInterpretation <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb27-499"><a href="#cb27-499" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-500"><a href="#cb27-500" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">fitted_draws</span>()</span>
+<span id="cb27-501"><a href="#cb27-501" aria-hidden="true" tabindex="-1"></a>    p_pos <span class="ot">&lt;-</span> <span class="fu">mean</span>(df<span class="sc">$</span>temp_feel <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb27-502"><a href="#cb27-502" aria-hidden="true" tabindex="-1"></a>    <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"interp-panel"</span>,</span>
+<span id="cb27-503"><a href="#cb27-503" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sprintf</span>(</span>
+<span id="cb27-504"><a href="#cb27-504" aria-hidden="true" tabindex="-1"></a>          <span class="fu">paste0</span>(</span>
+<span id="cb27-505"><a href="#cb27-505" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Posterior median relationship: rides = %.1f + %.1f x temp_feel. "</span>,</span>
+<span id="cb27-506"><a href="#cb27-506" aria-hidden="true" tabindex="-1"></a>            <span class="st">"P(beta1 &gt; 0 | data) \u2248 %.3f -- based on the real data, we're "</span>,</span>
+<span id="cb27-507"><a href="#cb27-507" aria-hidden="true" tabindex="-1"></a>            <span class="st">"essentially certain ridership increases with temperature."</span></span>
+<span id="cb27-508"><a href="#cb27-508" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-509"><a href="#cb27-509" aria-hidden="true" tabindex="-1"></a>          <span class="fu">median</span>(df<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>), <span class="fu">median</span>(df<span class="sc">$</span>temp_feel), p_pos</span>
+<span id="cb27-510"><a href="#cb27-510" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-511"><a href="#cb27-511" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-512"><a href="#cb27-512" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-513"><a href="#cb27-513" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-514"><a href="#cb27-514" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta1CompareTable <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb27-515"><a href="#cb27-515" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-516"><a href="#cb27-516" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb27-517"><a href="#cb27-517" aria-hidden="true" tabindex="-1"></a>      <span class="at">Source =</span> <span class="fu">c</span>(<span class="st">"Prior belief (m1)"</span>, <span class="st">"Data alone (OLS estimate)"</span>, <span class="st">"Posterior (median)"</span>),</span>
+<span id="cb27-518"><a href="#cb27-518" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">beta1 (rides per degree)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb27-519"><a href="#cb27-519" aria-hidden="true" tabindex="-1"></a>        input<span class="sc">$</span>m1,</span>
+<span id="cb27-520"><a href="#cb27-520" aria-hidden="true" tabindex="-1"></a>        ols_beta1_est,</span>
+<span id="cb27-521"><a href="#cb27-521" aria-hidden="true" tabindex="-1"></a>        <span class="fu">median</span>(<span class="fu">fitted_draws</span>()<span class="sc">$</span>temp_feel)</span>
+<span id="cb27-522"><a href="#cb27-522" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-523"><a href="#cb27-523" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-524"><a href="#cb27-524" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb27-525"><a href="#cb27-525" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-526"><a href="#cb27-526" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta1ComparePlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-527"><a href="#cb27-527" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-528"><a href="#cb27-528" aria-hidden="true" tabindex="-1"></a>    post_beta1 <span class="ot">&lt;-</span> <span class="fu">fitted_draws</span>()<span class="sc">$</span>temp_feel</span>
+<span id="cb27-529"><a href="#cb27-529" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-530"><a href="#cb27-530" aria-hidden="true" tabindex="-1"></a>    x_lo <span class="ot">&lt;-</span> <span class="fu">min</span>(input<span class="sc">$</span>m1 <span class="sc">-</span> <span class="dv">3</span><span class="sc">*</span>input<span class="sc">$</span>s1, ols_beta1_est <span class="sc">-</span> <span class="dv">4</span><span class="sc">*</span>ols_beta1_se, <span class="fu">min</span>(post_beta1))</span>
+<span id="cb27-531"><a href="#cb27-531" aria-hidden="true" tabindex="-1"></a>    x_hi <span class="ot">&lt;-</span> <span class="fu">max</span>(input<span class="sc">$</span>m1 <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>input<span class="sc">$</span>s1, ols_beta1_est <span class="sc">+</span> <span class="dv">4</span><span class="sc">*</span>ols_beta1_se, <span class="fu">max</span>(post_beta1))</span>
+<span id="cb27-532"><a href="#cb27-532" aria-hidden="true" tabindex="-1"></a>    x_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(x_lo, x_hi, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
+<span id="cb27-533"><a href="#cb27-533" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-534"><a href="#cb27-534" aria-hidden="true" tabindex="-1"></a>    prior_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x_seq, <span class="at">density =</span> <span class="fu">dnorm</span>(x_seq, input<span class="sc">$</span>m1, input<span class="sc">$</span>s1), <span class="at">curve =</span> <span class="st">"Prior belief"</span>)</span>
+<span id="cb27-535"><a href="#cb27-535" aria-hidden="true" tabindex="-1"></a>    data_df  <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x_seq, <span class="at">density =</span> <span class="fu">dnorm</span>(x_seq, ols_beta1_est, ols_beta1_se), <span class="at">curve =</span> <span class="st">"Data alone (OLS)"</span>)</span>
+<span id="cb27-536"><a href="#cb27-536" aria-hidden="true" tabindex="-1"></a>    post_dens <span class="ot">&lt;-</span> <span class="fu">density</span>(post_beta1, <span class="at">n =</span> <span class="dv">500</span>)</span>
+<span id="cb27-537"><a href="#cb27-537" aria-hidden="true" tabindex="-1"></a>    post_df  <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> post_dens<span class="sc">$</span>x, <span class="at">density =</span> post_dens<span class="sc">$</span>y, <span class="at">curve =</span> <span class="st">"Posterior"</span>)</span>
+<span id="cb27-538"><a href="#cb27-538" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-539"><a href="#cb27-539" aria-hidden="true" tabindex="-1"></a>    all_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(prior_df, data_df, post_df) <span class="sc">%&gt;%</span></span>
+<span id="cb27-540"><a href="#cb27-540" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">curve =</span> <span class="fu">factor</span>(curve, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Prior belief"</span>, <span class="st">"Data alone (OLS)"</span>, <span class="st">"Posterior"</span>)))</span>
+<span id="cb27-541"><a href="#cb27-541" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-542"><a href="#cb27-542" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(all_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> density, <span class="at">color =</span> curve, <span class="at">fill =</span> curve)) <span class="sc">+</span></span>
+<span id="cb27-543"><a href="#cb27-543" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_area</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">position =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb27-544"><a href="#cb27-544" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb27-545"><a href="#cb27-545" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Prior belief"</span> <span class="ot">=</span> <span class="st">"#4C72B0"</span>,</span>
+<span id="cb27-546"><a href="#cb27-546" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Data alone (OLS)"</span> <span class="ot">=</span> <span class="st">"#DD8452"</span>,</span>
+<span id="cb27-547"><a href="#cb27-547" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Posterior"</span> <span class="ot">=</span> <span class="st">"#55A868"</span>)) <span class="sc">+</span></span>
+<span id="cb27-548"><a href="#cb27-548" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Prior belief"</span> <span class="ot">=</span> <span class="st">"#4C72B0"</span>,</span>
+<span id="cb27-549"><a href="#cb27-549" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Data alone (OLS)"</span> <span class="ot">=</span> <span class="st">"#DD8452"</span>,</span>
+<span id="cb27-550"><a href="#cb27-550" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Posterior"</span> <span class="ot">=</span> <span class="st">"#55A868"</span>)) <span class="sc">+</span></span>
+<span id="cb27-551"><a href="#cb27-551" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"beta1 (expected change in rides per 1-degree increase)"</span>,</span>
+<span id="cb27-552"><a href="#cb27-552" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="st">"density"</span>, <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb27-553"><a href="#cb27-553" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb27-554"><a href="#cb27-554" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span>
+<span id="cb27-555"><a href="#cb27-555" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-556"><a href="#cb27-556" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-557"><a href="#cb27-557" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta0cCompareTable <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb27-558"><a href="#cb27-558" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-559"><a href="#cb27-559" aria-hidden="true" tabindex="-1"></a>    post_beta0c <span class="ot">&lt;-</span> <span class="fu">fitted_draws</span>()<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> <span class="fu">fitted_draws</span>()<span class="sc">$</span>temp_feel <span class="sc">*</span> mean_temp</span>
+<span id="cb27-560"><a href="#cb27-560" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb27-561"><a href="#cb27-561" aria-hidden="true" tabindex="-1"></a>      <span class="at">Source =</span> <span class="fu">c</span>(<span class="st">"Prior belief (m0)"</span>, <span class="st">"Data alone (OLS, at avg. temp)"</span>, <span class="st">"Posterior (median)"</span>),</span>
+<span id="cb27-562"><a href="#cb27-562" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">beta0c (typical rides at avg. temp)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb27-563"><a href="#cb27-563" aria-hidden="true" tabindex="-1"></a>        input<span class="sc">$</span>m0,</span>
+<span id="cb27-564"><a href="#cb27-564" aria-hidden="true" tabindex="-1"></a>        ols_mu_est,</span>
+<span id="cb27-565"><a href="#cb27-565" aria-hidden="true" tabindex="-1"></a>        <span class="fu">median</span>(post_beta0c)</span>
+<span id="cb27-566"><a href="#cb27-566" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb27-567"><a href="#cb27-567" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-568"><a href="#cb27-568" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb27-569"><a href="#cb27-569" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-570"><a href="#cb27-570" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta0cComparePlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-571"><a href="#cb27-571" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-572"><a href="#cb27-572" aria-hidden="true" tabindex="-1"></a>    post_beta0c <span class="ot">&lt;-</span> <span class="fu">fitted_draws</span>()<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> <span class="fu">fitted_draws</span>()<span class="sc">$</span>temp_feel <span class="sc">*</span> mean_temp</span>
+<span id="cb27-573"><a href="#cb27-573" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-574"><a href="#cb27-574" aria-hidden="true" tabindex="-1"></a>    x_lo <span class="ot">&lt;-</span> <span class="fu">min</span>(input<span class="sc">$</span>m0 <span class="sc">-</span> <span class="dv">3</span><span class="sc">*</span>input<span class="sc">$</span>s0, ols_mu_est <span class="sc">-</span> <span class="dv">4</span><span class="sc">*</span>ols_mu_se, <span class="fu">min</span>(post_beta0c))</span>
+<span id="cb27-575"><a href="#cb27-575" aria-hidden="true" tabindex="-1"></a>    x_hi <span class="ot">&lt;-</span> <span class="fu">max</span>(input<span class="sc">$</span>m0 <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>input<span class="sc">$</span>s0, ols_mu_est <span class="sc">+</span> <span class="dv">4</span><span class="sc">*</span>ols_mu_se, <span class="fu">max</span>(post_beta0c))</span>
+<span id="cb27-576"><a href="#cb27-576" aria-hidden="true" tabindex="-1"></a>    x_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(x_lo, x_hi, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
+<span id="cb27-577"><a href="#cb27-577" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-578"><a href="#cb27-578" aria-hidden="true" tabindex="-1"></a>    prior_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x_seq, <span class="at">density =</span> <span class="fu">dnorm</span>(x_seq, input<span class="sc">$</span>m0, input<span class="sc">$</span>s0), <span class="at">curve =</span> <span class="st">"Prior belief"</span>)</span>
+<span id="cb27-579"><a href="#cb27-579" aria-hidden="true" tabindex="-1"></a>    data_df  <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x_seq, <span class="at">density =</span> <span class="fu">dnorm</span>(x_seq, ols_mu_est, ols_mu_se), <span class="at">curve =</span> <span class="st">"Data alone (OLS)"</span>)</span>
+<span id="cb27-580"><a href="#cb27-580" aria-hidden="true" tabindex="-1"></a>    post_dens <span class="ot">&lt;-</span> <span class="fu">density</span>(post_beta0c, <span class="at">n =</span> <span class="dv">500</span>)</span>
+<span id="cb27-581"><a href="#cb27-581" aria-hidden="true" tabindex="-1"></a>    post_df  <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> post_dens<span class="sc">$</span>x, <span class="at">density =</span> post_dens<span class="sc">$</span>y, <span class="at">curve =</span> <span class="st">"Posterior"</span>)</span>
+<span id="cb27-582"><a href="#cb27-582" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-583"><a href="#cb27-583" aria-hidden="true" tabindex="-1"></a>    all_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(prior_df, data_df, post_df) <span class="sc">%&gt;%</span></span>
+<span id="cb27-584"><a href="#cb27-584" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">curve =</span> <span class="fu">factor</span>(curve, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Prior belief"</span>, <span class="st">"Data alone (OLS)"</span>, <span class="st">"Posterior"</span>)))</span>
+<span id="cb27-585"><a href="#cb27-585" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-586"><a href="#cb27-586" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(all_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> density, <span class="at">color =</span> curve, <span class="at">fill =</span> curve)) <span class="sc">+</span></span>
+<span id="cb27-587"><a href="#cb27-587" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_area</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">position =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb27-588"><a href="#cb27-588" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb27-589"><a href="#cb27-589" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Prior belief"</span> <span class="ot">=</span> <span class="st">"#4C72B0"</span>,</span>
+<span id="cb27-590"><a href="#cb27-590" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Data alone (OLS)"</span> <span class="ot">=</span> <span class="st">"#DD8452"</span>,</span>
+<span id="cb27-591"><a href="#cb27-591" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Posterior"</span> <span class="ot">=</span> <span class="st">"#55A868"</span>)) <span class="sc">+</span></span>
+<span id="cb27-592"><a href="#cb27-592" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Prior belief"</span> <span class="ot">=</span> <span class="st">"#4C72B0"</span>,</span>
+<span id="cb27-593"><a href="#cb27-593" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Data alone (OLS)"</span> <span class="ot">=</span> <span class="st">"#DD8452"</span>,</span>
+<span id="cb27-594"><a href="#cb27-594" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Posterior"</span> <span class="ot">=</span> <span class="st">"#55A868"</span>)) <span class="sc">+</span></span>
+<span id="cb27-595"><a href="#cb27-595" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"beta0c (typical ridership at the average temperature)"</span>,</span>
+<span id="cb27-596"><a href="#cb27-596" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="st">"density"</span>, <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb27-597"><a href="#cb27-597" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb27-598"><a href="#cb27-598" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span>
+<span id="cb27-599"><a href="#cb27-599" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-600"><a href="#cb27-600" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-601"><a href="#cb27-601" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>posteriorLinesPlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-602"><a href="#cb27-602" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-603"><a href="#cb27-603" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">fitted_draws</span>() <span class="sc">%&gt;%</span> <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">draw_id =</span> <span class="fu">row_number</span>())</span>
+<span id="cb27-604"><a href="#cb27-604" aria-hidden="true" tabindex="-1"></a>    x_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(temp_range[<span class="dv">1</span>], temp_range[<span class="dv">2</span>], <span class="at">length.out =</span> <span class="dv">50</span>)</span>
+<span id="cb27-605"><a href="#cb27-605" aria-hidden="true" tabindex="-1"></a>    line_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb27-606"><a href="#cb27-606" aria-hidden="true" tabindex="-1"></a>      <span class="fu">crossing</span>(<span class="at">x =</span> x_seq) <span class="sc">%&gt;%</span></span>
+<span id="cb27-607"><a href="#cb27-607" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">mu =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> temp_feel <span class="sc">*</span> x)</span>
+<span id="cb27-608"><a href="#cb27-608" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-609"><a href="#cb27-609" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb27-610"><a href="#cb27-610" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">data =</span> bikes_data, <span class="fu">aes</span>(<span class="at">x =</span> temp_feel, <span class="at">y =</span> rides), <span class="at">size =</span> <span class="fl">0.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb27-611"><a href="#cb27-611" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">data =</span> line_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> mu, <span class="at">group =</span> draw_id),</span>
+<span id="cb27-612"><a href="#cb27-612" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"#55A868"</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb27-613"><a href="#cb27-613" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"temp_feel"</span>, <span class="at">y =</span> <span class="st">"rides"</span>,</span>
+<span id="cb27-614"><a href="#cb27-614" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"50 posterior plausible lines over the real observed data"</span>) <span class="sc">+</span></span>
+<span id="cb27-615"><a href="#cb27-615" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>)</span>
+<span id="cb27-616"><a href="#cb27-616" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-617"><a href="#cb27-617" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-618"><a href="#cb27-618" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>beta1PosteriorPlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-619"><a href="#cb27-619" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-620"><a href="#cb27-620" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fitted_draws</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-621"><a href="#cb27-621" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> temp_feel)) <span class="sc">+</span></span>
+<span id="cb27-622"><a href="#cb27-622" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">"#55A868"</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb27-623"><a href="#cb27-623" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#8B3A3A"</span>) <span class="sc">+</span></span>
+<span id="cb27-624"><a href="#cb27-624" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"beta1 (posterior draws)"</span>, <span class="at">y =</span> <span class="st">"density"</span>,</span>
+<span id="cb27-625"><a href="#cb27-625" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"Posterior distribution of the temp_feel effect"</span>) <span class="sc">+</span></span>
+<span id="cb27-626"><a href="#cb27-626" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>)</span>
+<span id="cb27-627"><a href="#cb27-627" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-628"><a href="#cb27-628" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-629"><a href="#cb27-629" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>posteriorCode <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb27-630"><a href="#cb27-630" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stan_call_text</span>(input<span class="sc">$</span>m0, input<span class="sc">$</span>s0, input<span class="sc">$</span>m1, input<span class="sc">$</span>s1, input<span class="sc">$</span>l,</span>
+<span id="cb27-631"><a href="#cb27-631" aria-hidden="true" tabindex="-1"></a>                   <span class="at">prior_pd =</span> <span class="cn">FALSE</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">2000</span>)</span>
+<span id="cb27-632"><a href="#cb27-632" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-633"><a href="#cb27-633" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-634"><a href="#cb27-634" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>diagnostics <span class="ot">&lt;-</span> <span class="fu">renderPrint</span>({</span>
+<span id="cb27-635"><a href="#cb27-635" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_model</span>())</span>
+<span id="cb27-636"><a href="#cb27-636" aria-hidden="true" tabindex="-1"></a>    summ <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">fitted_model</span>())</span>
+<span id="cb27-637"><a href="#cb27-637" aria-hidden="true" tabindex="-1"></a>    <span class="co"># summary() on a stanreg object already includes Rhat and n_eff columns</span></span>
+<span id="cb27-638"><a href="#cb27-638" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for every parameter -- no separate rhat()/neff_ratio() call needed,</span></span>
+<span id="cb27-639"><a href="#cb27-639" aria-hidden="true" tabindex="-1"></a>    <span class="co"># which sidesteps a real gotcha: the `posterior` package also defines</span></span>
+<span id="cb27-640"><a href="#cb27-640" aria-hidden="true" tabindex="-1"></a>    <span class="co"># a function called rhat(), but it expects a plain numeric draws array,</span></span>
+<span id="cb27-641"><a href="#cb27-641" aria-hidden="true" tabindex="-1"></a>    <span class="co"># not a fitted model object. If both rstanarm and posterior are loaded,</span></span>
+<span id="cb27-642"><a href="#cb27-642" aria-hidden="true" tabindex="-1"></a>    <span class="co"># whichever was loaded LAST wins the name "rhat" -- and if posterior's</span></span>
+<span id="cb27-643"><a href="#cb27-643" aria-hidden="true" tabindex="-1"></a>    <span class="co"># version gets called on a stanreg object by mistake, it fails with</span></span>
+<span id="cb27-644"><a href="#cb27-644" aria-hidden="true" tabindex="-1"></a>    <span class="co"># exactly the "non-numeric argument to binary operator" error, since</span></span>
+<span id="cb27-645"><a href="#cb27-645" aria-hidden="true" tabindex="-1"></a>    <span class="co"># it's trying to do arithmetic on something that isn't a plain numeric</span></span>
+<span id="cb27-646"><a href="#cb27-646" aria-hidden="true" tabindex="-1"></a>    <span class="co"># array. summary() avoids this ambiguity entirely.</span></span>
+<span id="cb27-647"><a href="#cb27-647" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(summ[, <span class="fu">c</span>(<span class="st">"Rhat"</span>, <span class="st">"n_eff"</span>)])</span>
+<span id="cb27-648"><a href="#cb27-648" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-649"><a href="#cb27-649" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-650"><a href="#cb27-650" aria-hidden="true" tabindex="-1"></a>  <span class="do">## ===== TAB 3: Posterior prediction (fast, reuses fitted_draws) =====</span></span>
+<span id="cb27-651"><a href="#cb27-651" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-652"><a href="#cb27-652" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>predictionStatus <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb27-653"><a href="#cb27-653" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">fitted_draws</span>())) {</span>
+<span id="cb27-654"><a href="#cb27-654" aria-hidden="true" tabindex="-1"></a>      <span class="fu">p</span>(<span class="fu">em</span>(<span class="st">"Fit a posterior model on Tab 2 first -- this tab reuses those draws."</span>))</span>
+<span id="cb27-655"><a href="#cb27-655" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb27-656"><a href="#cb27-656" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NULL</span></span>
+<span id="cb27-657"><a href="#cb27-657" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-658"><a href="#cb27-658" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-659"><a href="#cb27-659" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-660"><a href="#cb27-660" aria-hidden="true" tabindex="-1"></a>  prediction_draws <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb27-661"><a href="#cb27-661" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">fitted_draws</span>())</span>
+<span id="cb27-662"><a href="#cb27-662" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">fitted_draws</span>()</span>
+<span id="cb27-663"><a href="#cb27-663" aria-hidden="true" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> df<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span> <span class="sc">+</span> df<span class="sc">$</span>temp_feel <span class="sc">*</span> input<span class="sc">$</span>temp_predict</span>
+<span id="cb27-664"><a href="#cb27-664" aria-hidden="true" tabindex="-1"></a>    y_new <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(mu), <span class="at">mean =</span> mu, <span class="at">sd =</span> df<span class="sc">$</span>sigma)</span>
+<span id="cb27-665"><a href="#cb27-665" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">mu =</span> mu, <span class="at">y_new =</span> y_new)</span>
+<span id="cb27-666"><a href="#cb27-666" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-667"><a href="#cb27-667" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-668"><a href="#cb27-668" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>predictionStatement <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb27-669"><a href="#cb27-669" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">prediction_draws</span>())</span>
+<span id="cb27-670"><a href="#cb27-670" aria-hidden="true" tabindex="-1"></a>    pd <span class="ot">&lt;-</span> <span class="fu">prediction_draws</span>()</span>
+<span id="cb27-671"><a href="#cb27-671" aria-hidden="true" tabindex="-1"></a>    mu_ci <span class="ot">&lt;-</span> <span class="fu">quantile</span>(pd<span class="sc">$</span>mu, <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</span>
+<span id="cb27-672"><a href="#cb27-672" aria-hidden="true" tabindex="-1"></a>    y_ci  <span class="ot">&lt;-</span> <span class="fu">quantile</span>(pd<span class="sc">$</span>y_new, <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</span>
+<span id="cb27-673"><a href="#cb27-673" aria-hidden="true" tabindex="-1"></a>    <span class="fu">div</span>(<span class="at">class =</span> <span class="st">"interp-panel"</span>,</span>
+<span id="cb27-674"><a href="#cb27-674" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sprintf</span>(</span>
+<span id="cb27-675"><a href="#cb27-675" aria-hidden="true" tabindex="-1"></a>          <span class="fu">paste0</span>(</span>
+<span id="cb27-676"><a href="#cb27-676" aria-hidden="true" tabindex="-1"></a>            <span class="st">"At %.0f\u00b0F: the TYPICAL ridership across all days at this "</span>,</span>
+<span id="cb27-677"><a href="#cb27-677" aria-hidden="true" tabindex="-1"></a>            <span class="st">"temperature is estimated at %.0f riders (95%% credible interval "</span>,</span>
+<span id="cb27-678"><a href="#cb27-678" aria-hidden="true" tabindex="-1"></a>            <span class="st">"%.0f to %.0f -- narrow, since it's an average). But ridership on "</span>,</span>
+<span id="cb27-679"><a href="#cb27-679" aria-hidden="true" tabindex="-1"></a>            <span class="st">"any ONE specific day at %.0f\u00b0F could range much more widely: "</span>,</span>
+<span id="cb27-680"><a href="#cb27-680" aria-hidden="true" tabindex="-1"></a>            <span class="st">"95%% posterior predictive interval %.0f to %.0f."</span></span>
+<span id="cb27-681"><a href="#cb27-681" aria-hidden="true" tabindex="-1"></a>          ),</span>
+<span id="cb27-682"><a href="#cb27-682" aria-hidden="true" tabindex="-1"></a>          input<span class="sc">$</span>temp_predict, <span class="fu">mean</span>(pd<span class="sc">$</span>mu), mu_ci[<span class="dv">1</span>], mu_ci[<span class="dv">2</span>],</span>
+<span id="cb27-683"><a href="#cb27-683" aria-hidden="true" tabindex="-1"></a>          input<span class="sc">$</span>temp_predict, y_ci[<span class="dv">1</span>], y_ci[<span class="dv">2</span>]</span>
+<span id="cb27-684"><a href="#cb27-684" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb27-685"><a href="#cb27-685" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-686"><a href="#cb27-686" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-687"><a href="#cb27-687" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-688"><a href="#cb27-688" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>predictionPlot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb27-689"><a href="#cb27-689" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">prediction_draws</span>())</span>
+<span id="cb27-690"><a href="#cb27-690" aria-hidden="true" tabindex="-1"></a>    pd <span class="ot">&lt;-</span> <span class="fu">prediction_draws</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-691"><a href="#cb27-691" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"quantity"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-692"><a href="#cb27-692" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">quantity =</span> <span class="fu">recode</span>(quantity,</span>
+<span id="cb27-693"><a href="#cb27-693" aria-hidden="true" tabindex="-1"></a>                               <span class="at">mu =</span> <span class="st">"Typical ridership (mu)"</span>,</span>
+<span id="cb27-694"><a href="#cb27-694" aria-hidden="true" tabindex="-1"></a>                               <span class="at">y_new =</span> <span class="st">"One day's ridership (posterior predictive)"</span>))</span>
+<span id="cb27-695"><a href="#cb27-695" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(pd, <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">fill =</span> quantity)) <span class="sc">+</span></span>
+<span id="cb27-696"><a href="#cb27-696" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb27-697"><a href="#cb27-697" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Typical ridership (mu)"</span> <span class="ot">=</span> <span class="st">"#4C72B0"</span>,</span>
+<span id="cb27-698"><a href="#cb27-698" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"One day's ridership (posterior predictive)"</span> <span class="ot">=</span> <span class="st">"#DD8452"</span>)) <span class="sc">+</span></span>
+<span id="cb27-699"><a href="#cb27-699" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"rides"</span>, <span class="at">y =</span> <span class="st">"density"</span>, <span class="at">fill =</span> <span class="cn">NULL</span>,</span>
+<span id="cb27-700"><a href="#cb27-700" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="fu">sprintf</span>(<span class="st">"Posterior vs. posterior predictive at %.0f\u00b0F"</span>, input<span class="sc">$</span>temp_predict)) <span class="sc">+</span></span>
+<span id="cb27-701"><a href="#cb27-701" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb27-702"><a href="#cb27-702" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span>
+<span id="cb27-703"><a href="#cb27-703" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-704"><a href="#cb27-704" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-705"><a href="#cb27-705" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>predictionCode <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb27-706"><a href="#cb27-706" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sprintf</span>(</span>
+<span id="cb27-707"><a href="#cb27-707" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste0</span>(</span>
+<span id="cb27-708"><a href="#cb27-708" aria-hidden="true" tabindex="-1"></a>        <span class="st">"posterior &lt;- as.data.frame(bike_model)</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-709"><a href="#cb27-709" aria-hidden="true" tabindex="-1"></a>        <span class="st">"mu &lt;- posterior$`(Intercept)` + posterior$temp_feel * %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb27-710"><a href="#cb27-710" aria-hidden="true" tabindex="-1"></a>        <span class="st">"y_new &lt;- rnorm(length(mu), mean = mu, sd = posterior$sigma)"</span></span>
+<span id="cb27-711"><a href="#cb27-711" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb27-712"><a href="#cb27-712" aria-hidden="true" tabindex="-1"></a>      input<span class="sc">$</span>temp_predict</span>
+<span id="cb27-713"><a href="#cb27-713" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-714"><a href="#cb27-714" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-715"><a href="#cb27-715" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-716"><a href="#cb27-716" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>shortcutCode <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb27-717"><a href="#cb27-717" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sprintf</span>(</span>
+<span id="cb27-718"><a href="#cb27-718" aria-hidden="true" tabindex="-1"></a>      <span class="st">"posterior_predict(bike_model, newdata = data.frame(temp_feel = %d))"</span>,</span>
+<span id="cb27-719"><a href="#cb27-719" aria-hidden="true" tabindex="-1"></a>      input<span class="sc">$</span>temp_predict</span>
+<span id="cb27-720"><a href="#cb27-720" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-721"><a href="#cb27-721" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb27-722"><a href="#cb27-722" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-723"><a href="#cb27-723" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-724"><a href="#cb27-724" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<p></p><div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div><p></p>
+</div>
+</div>
+</section>
+<section id="questions" class="level3">
+<h3 class="anchored" data-anchor-id="questions">Questions</h3>
+<ol type="1">
+<li>100−1.96(40)=100−78.4≈22 100+1.96(40)=100+78.4≈178</li>
+</ol>
+<ul>
+<li><p>95% corresponds to mean±1.96 SD, <em>not</em> ±1 SD</p>
+<ul>
+<li><code>plot_normal(100,40)</code></li>
+</ul></li>
+</ul>
+<ol start="2" type="1">
+<li>The fan of 200 lines widens substantially, especially toward the edges of the temperature range, while staying pinched together near the average temperature
+<ul>
+<li>with s1=80, the 95% range for beta1 itself widens to roughly 100 ± 1.96(80) = -57 to 257 — meaning some of the 200 simulated lines will now even slope <em>downward</em>, which wasn’t plausible at s1=40.</li>
+</ul></li>
+<li>l=0.002 represents the stronger belief in a tight relationship</li>
+</ol>
+<ul>
+<li><p>We are saying σ = 1/l. σ is the variance in rides scattered around the mean</p>
+<ul>
+<li><p>1/0.002 = 500. In other words, once temperature is accounted for, relatively small scatter remains (500 rides)</p></li>
+<li><p>1/0.003 =3,333. In other words, once temperature is accounted for, very sginificant scatter remains (3,333 rides) implying temperature is only a loose, weak predictor.</p></li>
+</ul></li>
+</ul>
+<ol start="4" type="1">
+<li>sigma is restricted to non-negative values, while beta0c and beta1 can genuinely take any real number — including zero or negative. That constraint forces sigma into a fundamentally different <em>shape</em> of distribution than the other two.</li>
+</ol>
+<ul>
+<li>sigma is describing the scatter around the mean when temperature is controlled for, which cannot be a negative number. we could have negative slope (rides could decrease with increased temperature</li>
+</ul>
+<ol start="5" type="1">
+<li>posterior meidan for intercept = -2,197 (not helpful because we dont see any 0 degree days in our data). posterior median for temp_feel = 82.2</li>
+</ol>
+<ul>
+<li>The posterior almost exactly matches the prior suggesting our 500 data points carries more weight than our relatively loos prior.</li>
+</ul>
+<ol start="6" type="1">
+<li>This is computed by literally tallying what fraction of the thousands of MCMC draws of beta1 came out positive — a direct empirical estimate of the actual probability that the true slope exceeds zero, given this prior and this data. It’s a genuine probability statement about the <em>parameter</em>. A p-value answers a structurally different question: <em>“if the true effect were exactly zero, how surprising would data like this be?”</em> — a probability about the <em>data</em>, conditional on an assumption about the parameter, never a probability about the parameter itself.</li>
+<li>it means the several MCMC chains have <strong>not</strong> converged to the same posterior — they’re disagreeing substantially with each other.</li>
+<li><strong>mu’s 95% credible interval</strong>: roughly 3843 to 4095 — narrow, about 250 rides wide. <strong>Posterior predictive 95% interval</strong>: roughly 1500 to 6482 — about 5000 rides wide, roughly <strong>20× wider</strong>.</li>
+<li><strong>Why</strong>: mu’s interval only reflects uncertainty about the <em>average</em> relationship (from not knowing beta0/beta1 exactly) — and averaging across many days smooths out individual noise, so that uncertainty shrinks a lot with n=500. The posterior predictive interval has to add a second, much bigger source of uncertainty on top: genuine day-to-day scatter (σ≈1281), representing how much any <em>one specific</em> day’s ridership naturally varies even if the true average were known perfectly.</li>
+<li>even doubling m0 (a substantially “wrong,” confidently-stated prior belief) should still get pulled back close to the Q5 baseline once real data enters, since n=500 comfortably outweighs a moderately-confident prior</li>
+</ol>
+<p>3.</p>
+<p>4.</p>
+<p>5.</p>
+<p>6.</p>
+<p>7.</p>
+<p>8.</p>
+<p>9.</p>
+<p>10.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
