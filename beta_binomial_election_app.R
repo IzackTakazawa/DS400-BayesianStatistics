@@ -47,7 +47,8 @@
 ## Your answer: Mean doesn't change stays put at 0.450
 ## 95% CI ~ (35.4%, 54.8%) -> (40.2%, 49.9%)
 ## The mean only depends on the alpha:beta ratio, which 4x scaling preserves
-## the FINISH WRITING
+## but alpha + beta goes from 100 to 400, so it's the same belief held more
+## confidently. The interval narrows to about half going from SD 0.050 -> 0.025.
 ##
 ##
 ## ------------------------------------------------------------
@@ -59,7 +60,14 @@
 ## no single mode (hint: where does the density pile up?).
 ##
 ## Your answer:
+## Beta(1,1): mean = 0.500, mode = none, SD = 0.289
+## Beta(0.5,0.5): mean = 0.500, mode = none, SD = 0.354
 ##
+## Beta(1,1) is a flat line. Every value of pi has the same density, so
+## no point is more plausible than any other.
+##
+## Beta(0.5,0.5) is U-shaped. The density piles up at the edges, at 0 and 1,
+## so there are two peaks instead of one. It looks to be bimodal.
 ##
 ## ------------------------------------------------------------
 ## Q4 (Tab 2) -- Set alpha = beta = 1, then n = 50, y = 30. Compare the
@@ -67,7 +75,9 @@
 ## Explain why this happens in terms of what a flat prior represents.
 ##
 ## Your answer:
-##
+## The Posterior sits exactly on top of the Scaled Likelihood. It looks like a
+## constant doesn't change its shape. Posterior is proportional to the
+## likelihood, so the data alone determines the posterior.
 ##
 ## ------------------------------------------------------------
 ## Q5 (Tab 2) -- Reset to the text's numbers (alpha=45, beta=55, n=50,
@@ -77,7 +87,8 @@
 ## overrule a moderately confident prior?
 ##
 ## Your answer:
-##
+## n = 50: prior gets 67% of the weight, poll gets 33%. Posterior mean is 0.500.
+## At n = 500 the weights flip to 17% and 83%, and the posterior mean is 0.575.
 ##
 ## ------------------------------------------------------------
 ## Q6 (Tab 2) -- Using the text's numbers (alpha=45, beta=55, n=50,
@@ -87,6 +98,10 @@
 ## interval cannot -- and why.
 ##
 ## Your answer:
+## The bayesian credible interval is about 42.0% to 58.0% and the frequintist
+## confidence interval is about 45.2% to 73.6%. The credible interval can state
+## a 95% probability that theta is in that range, which the frequintist interval
+## cannot claim.
 ##
 ##
 ## ------------------------------------------------------------
@@ -97,6 +112,10 @@
 ## weight sentence? Why did the data win here when it didn't in Q5?
 ##
 ## Your answer:
+## The posterior is Beta(130, 170) with the mean 0.433, closer to the data
+## than to the prior. This matches the weight sentence, which gives the data 67%.
+## The data wins because n = 200 is twice the prior's effective size of 100, and
+## the weights ignore how much both disagree.
 ##
 ##
 ## ------------------------------------------------------------
@@ -110,7 +129,10 @@
 ## noisily varying around a fixed number.
 ##
 ## Your answer:
-##
+## I could forsee this being a problem as if this model was trying to be used in
+## a real life case scenario the most recent priors would be recent polls which
+## would be more relevant to the campaign meaning it should hold more weight than
+## older information.
 ##
 ## ============================================================
 
@@ -677,3 +699,6 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+#
